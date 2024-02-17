@@ -9,12 +9,12 @@ if (project_path not in sys.path):
 print(sys.path)
 logging.basicConfig(level=logging.DEBUG)
 
-from tokenizer.basic_tokenizer import Token, Tokenizer, basic_rules
+from tokenizer.basic_tokenizer import Token, BasicTokenizer, basic_rules
 
 class TestBasicTokenizer(unittest.TestCase):
 
     def test_basic_storage_string(self):
-        tokenizer = Tokenizer(basic_rules)
+        tokenizer = BasicTokenizer(basic_rules)
         code = """{
         "port": 8999,
         "target_url": "https://example.com",
