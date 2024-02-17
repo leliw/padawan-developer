@@ -14,32 +14,32 @@ class Sentence:
 
 class BasicSentencizer:
   
-  def __init__(self, block_start='LBRACE', block_end='RBRACE', separator='COMMA'):
+  def __init__(self, block_start='[LBRACE]', block_end='[RBRACE]', separator='[COMMA]'):
     self.block_start = block_start
     self.block_end = block_end
     self.separator = separator
 
-  def sentencize(self, tokens: list[Token]) -> list:
-    sentences = []
+  def sentencize(self, tokens: list[Token]) -> list[Sentence]:
+    sentences: list[Sentence] = []
     start = None
-    last = (0,0)
+    last = Sentence(None, 0,0)
     for index, token in enumerate(tokens):
         if token.type == self.block_start and start is None:
             start = index+1
         elif token.type == self.block_end and start is not None:
-            last = (start, index)
+            last = Sentence("BLOCK", start, index)
             start = None
             sentences.append(last)
         elif token.type == self.separator and start is None:
-            last = (last[1], index+1)
+            last = Sentence("SENTENCE", last.end, index+1)
             sentences.append(last)
-    if last[1] < len(tokens)-1:
-        last = (last[1], len(tokens))
+    if last.end < len(tokens)-1:
+        last = Sentence("SENTENCE", last.end, len(tokens))
         sentences.append(last)
-    ret = []
+    ret: list[Sentence] = []
     for s in sentences:
-        if tokens[s[1]-1].type == self.separator:
-            ret.append((s[0], s[1]-1))
+        if tokens[s.end-1].type == self.separator:
+            ret.append(Sentence(s.type, s.start, s.end-1))
         else:
-            ret.append((s[0], s[1]))
+            ret.append(s)
     return ret

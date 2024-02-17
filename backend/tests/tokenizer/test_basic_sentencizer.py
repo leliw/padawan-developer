@@ -9,13 +9,13 @@ if (project_path not in sys.path):
 print(sys.path)
 logging.basicConfig(level=logging.DEBUG)
 
-from tokenizer.basic_tokenizer import Token, BasicTokenizer, basic_rules
+from tokenizer.basic_tokenizer import BasicTokenizer
 from tokenizer.basic_sentencizer import BasicSentencizer
 
 class TestBasicSentencizer(unittest.TestCase):
 
-    def test_basic_storage_string(self):
-        tokenizer = BasicTokenizer(basic_rules)
+    def test_basic(self):
+        tokenizer = BasicTokenizer()
         code = """{
         "port": 8999,
         "target_url": "https://example.com",
@@ -24,8 +24,8 @@ class TestBasicSentencizer(unittest.TestCase):
         tokens = tokenizer.tokenize(code)
         sentencizer = BasicSentencizer()
         sentences = sentencizer.sentencize(tokens)
-
-        tokens2 = tokens[sentences[0][0]:sentences[0][1]]
+        self.assertEqual(1, len(sentences))
+        tokens2 = tokens[sentences[0].start:sentences[0].end]
         sentences = sentencizer.sentencize(tokens2)
         self.assertEqual(3, len(sentences))
 
