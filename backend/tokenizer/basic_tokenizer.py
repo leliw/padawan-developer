@@ -29,6 +29,8 @@ class Token:
     PAD = "[PAD]"
     UNK = "[UNK]"
     MASK = "[MASK]"
+    SPACE = '[WHITESPACE]'
+    NL = '[NL]'
 
     """A simple token representation."""
     def __init__(self, type: str, value: str):
@@ -83,7 +85,8 @@ class BasicTokenizer:
     def print_tokens(self, tokens: list[Token]):
         print([(t.type, t.value) for t in tokens])
 
-    def remove_wthitespaces(self, tokens: list[Token], whiespace_tokens=['[WHITESPACE]', '[NL]']):
+    
+    def remove_wthitespaces(self, tokens: list[Token], whiespace_tokens=[Token.SPACE, Token.NL]):
         """Remove whitespace and newline tokens."""
         ret = []
         for token in tokens:
@@ -95,7 +98,7 @@ class BasicTokenizer:
         t = token.type
         if t in ['[IDENTIFIER]', '[STRING]', '[NUMBER]']:
             v = self.get_temp_vocab_index(token.value)
-        elif t in ['[NL]', '[WHITESPACE]']:
+        elif t in [Token.SPACE, Token.NL]:
             v = len(token.value)
         else:
             v = None
@@ -116,11 +119,11 @@ class BasicTokenizer:
         elif t in ['IDENTIFIER', '[STRING]', '[NUMBER]']:
             i = self.id_to_token.get(id[1])
             v = self.temp_vocab[int(i[1:-1])]
-        elif t in ['[NL]', '[WHITESPACE]']:
+        elif t in [Token.SPACE, Token.NL]:
             l = self.id_to_token.get(id[1])
             if l is not None:
                 l = l[1:-1]
-                if t == '[NL]':
+                if t == Token.NL:
                     v = '\n' * int(l)
                 else:
                     v = ' ' * int(l)
