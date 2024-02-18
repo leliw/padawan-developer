@@ -31,6 +31,7 @@ class Token:
     MASK = "[MASK]"
     SPACE = '[WHITESPACE]'
     NL = '[NL]'
+    IDENTIFIER = '[IDENTIFIER]'
 
     """A simple token representation."""
     def __init__(self, type: str, value: str):
@@ -43,19 +44,27 @@ class Token:
 class BasicTokenizer:
     """A simple regex-based tokenizer."""
 
-    def __init__(self, special_characters = special_characters, rules = basic_rules):
+    def __init__(self, special_characters = special_characters, rules = basic_rules, keywords = None):
         """Create a new tokenizer with the given rules."""
         self.special_characters = special_characters
+        self.keywords = keywords
         self.rules = [(f"[{name}]", re.compile('\\'+c)) for name, c in special_characters.items()]
         self.rules += [(f"[{name}]", re.compile(pattern)) for name, pattern in rules.items()]
-
+        # Special tokens
         self.vocab = {Token.PAD: 0, Token.UNK: 1, Token.MASK: 2}
+        # Numeric tokens
         first = len(self.vocab)
         for i in range(0, 255):
             self.vocab[f"[{str(i)}]"] = first + i - 1
+        # Rule tokens
         first = len(self.vocab)
         for i, rule in enumerate(self.rules):
             self.vocab[rule[0]] = first + i
+        # Keyword tokens
+        if keywords:
+            first = len(self.vocab)
+            for i, keyword in enumerate(keywords):
+                self.vocab[f"[{keyword.upper()}]"] = first + i
 
         self.id_to_token = {id_: token for token, id_ in self.vocab.items()}
         self.temp_vocab = []
@@ -76,7 +85,21 @@ class BasicTokenizer:
                     break
             if not match:
                 raise SyntaxError(f'Unexpected character: {text[position]}')
+        if self.keywords:
+            tokens = self._tokenize_keywords(tokens)
         return tokens
+    
+    def _tokenize_keywords(self, tokens: list[Token]) -> list[Token]:
+        """Convert identifiers to uppercase if they are keywords."""
+        ret = []
+        for token in tokens:
+            t = token.type
+            v = token.value
+            if t == Token.IDENTIFIER and v in self.keywords:
+                ret.append(Token(f"[{v.upper()}]", v))
+            else:
+                ret.append(token)
+        return ret
     
     def detokenize(self, tokens: list[Token]) -> str:
         """Convert the given tokens back to a string."""
@@ -96,7 +119,7 @@ class BasicTokenizer:
 
     def _convert_token_to_id(self, token):
         t = token.type
-        if t in ['[IDENTIFIER]', '[STRING]', '[NUMBER]']:
+        if t in [Token.IDENTIFIER, '[STRING]', '[NUMBER]']:
             v = self.get_temp_vocab_index(token.value)
         elif t in [Token.SPACE, Token.NL]:
             v = len(token.value)
@@ -113,10 +136,13 @@ class BasicTokenizer:
     def _convert_id_to_token(self, id):
         t = self.id_to_token.get(id[0], Token.UNK)
         spec = t[1:-1]
+        keyword = t[1:-1].lower()
         # t =  if t not in [Token.PAD, Token.UNK, Token.MASK] else t
         if spec in self.special_characters.keys():
             v = self.special_characters[spec]
-        elif t in ['IDENTIFIER', '[STRING]', '[NUMBER]']:
+        elif self.keywords and keyword in self.keywords:
+            v = keyword
+        elif t in [Token.IDENTIFIER, '[STRING]', '[NUMBER]']:
             i = self.id_to_token.get(id[1])
             v = self.temp_vocab[int(i[1:-1])]
         elif t in [Token.SPACE, Token.NL]:
