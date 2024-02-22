@@ -1,45 +1,60 @@
-
-
+"""Basic sentencizer"""
 from tokenizer.basic_tokenizer import Token
 
 class Sentence:
-   
-    def __init__(self, type: str, start: int, end: int):
-       self.type = type
-       self.start = start
-       self.end = end
+
+    def __init__(self, sentence_type: str, start: int, end: int, tokens: list[Token] = None ):
+        self.type = sentence_type
+        self.start = start
+        self.end = end
+        self.tokens = tokens
+
+    def get_body(self) -> str:
+        if self.tokens:
+            return "".join([t.value for t in self.tokens[self.start:self.end]])
+        return None
 
     def __str__(self):
-        return f'Token({self.type}, ({self.start}, {self.end}))'
+        if self.tokens:
+            return f'Sentence({self.type}, ({self.start}, {self.end}, "{self.get_body()}"))'
+        return f'Sentence({self.type}, ({self.start}, {self.end}))'
+
+basic_blocks =[
+    ("BRACED", "[LBRACE]", "[RBRACE]")
+]
 
 class BasicSentencizer:
-  
-  def __init__(self, block_start='[LBRACE]', block_end='[RBRACE]', separator='[COMMA]'):
-    self.block_start = block_start
-    self.block_end = block_end
-    self.separator = separator
 
-  def sentencize(self, tokens: list[Token]) -> list[Sentence]:
-    sentences: list[Sentence] = []
-    start = None
-    last = Sentence(None, 0,0)
-    for index, token in enumerate(tokens):
-        if token.type == self.block_start and start is None:
-            start = index+1
-        elif token.type == self.block_end and start is not None:
-            last = Sentence("BLOCK", start, index)
-            start = None
+    def __init__(self, blocks: list[tuple[str,str,str]] = None, separator='[COMMA]'):
+        self.blocks = blocks if blocks else basic_blocks
+        self.separator = separator
+
+        self.block_starts = {block[1]:block for block in self.blocks}
+
+    def sentencize(self, tokens: list[Token]) -> list[Sentence]:
+        sentences: list[Sentence] = []
+        start = 0
+        block_level = 0
+        block = ()
+        last = Sentence(None, 0,0)
+        for index, token in enumerate(tokens):
+            if token.type in self.block_starts.keys():
+                if block_level == 0:
+                    start = index + 1
+                    block = self.block_starts.get(token.type)
+                block_level += 1
+            elif block and token.type == block[2]:
+                block_level -= 1
+                if block_level == 0:
+                    last = Sentence(block[0], start, index, tokens)
+                    sentences.append(last)
+                    start = index + 1
+                    block = ()
+            elif token.type == self.separator and block_level == 0:
+                last = Sentence("SENTENCE", start if start else last.end, index, tokens)
+                sentences.append(last)
+                start = index + 1
+        if last.end < len(tokens)-1:
+            last = Sentence("SENTENCE", last.end, len(tokens), tokens)
             sentences.append(last)
-        elif token.type == self.separator and start is None:
-            last = Sentence("SENTENCE", last.end, index+1)
-            sentences.append(last)
-    if last.end < len(tokens)-1:
-        last = Sentence("SENTENCE", last.end, len(tokens))
-        sentences.append(last)
-    ret: list[Sentence] = []
-    for s in sentences:
-        if tokens[s.end-1].type == self.separator:
-            ret.append(Sentence(s.type, s.start, s.end-1))
-        else:
-            ret.append(s)
-    return ret
+        return sentences

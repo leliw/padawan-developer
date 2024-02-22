@@ -32,6 +32,13 @@ class TestBasicTokenizer(unittest.TestCase):
         string = tokenizer.detokenize(tokens)
         self.assertEqual(TEST_CODE, string)
 
+    def test_remove_wthitespaces(self):
+        tokenizer = BasicTokenizer()
+        tokens = tokenizer.tokenize(TEST_CODE)
+        t2 = tokenizer.remove_wthitespaces(tokens)
+        string = tokenizer.detokenize(t2.values())
+        self.assertEqual(TEST_CODE.replace("\n","").replace(" ", ""), string)
+
     def test_conversion_to_ids(self):
         tokenizer = BasicTokenizer()
         tokens = tokenizer.tokenize(TEST_CODE)

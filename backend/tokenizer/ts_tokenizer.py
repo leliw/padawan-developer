@@ -1,6 +1,6 @@
-
-
-from tokenizer.basic_tokenizer import BasicTokenizer, Token
+"""TypeSript tokenizer and sentencizer"""
+from tokenizer.basic_sentencizer import BasicSentencizer
+from tokenizer.basic_tokenizer import BasicTokenizer
 
 # JavaScript and TypeScript keywords
 js_keywords = ["break", "case","catch","class","const","continue","debugger",
@@ -20,3 +20,8 @@ class TsTokenizer(BasicTokenizer):
     """A simple regex-based tokenizer for TypeScript."""
     def __init__(self):
         super().__init__(keywords=ts_keywords)
+
+class TsSentencizer(BasicSentencizer):
+    """TypeScript sentencizer"""
+    def __init__(self):
+        super().__init__(separator='[SEMICOLON]')

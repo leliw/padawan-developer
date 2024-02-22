@@ -9,7 +9,7 @@ if (project_path not in sys.path):
 print(sys.path)
 logging.basicConfig(level=logging.DEBUG)
 
-from tokenizer.ts_tokenizer import TsTokenizer
+from tokenizer.ts_tokenizer import TsSentencizer, TsTokenizer
 
 
 TEST_CODE = """export interface Status {
@@ -40,10 +40,20 @@ class TestTsTokenizer(unittest.TestCase):
         print(ids)
         t2 = [tokenizer._convert_id_to_token(id_) for id_ in ids]   
         self.assertEqual(
-            [str(t) for t in tokens], 
+            [str(t) for t in tokens],
             [str(t) for t in t2]
             )
-        
+
+class TestTsSentencizer(unittest.TestCase):
+
+    def test_sentencize(self):
+        tokenizer = TsTokenizer()
+        tokens = tokenizer.tokenize(TEST_CODE)
+        sentencizer = TsSentencizer()
+        sentences = sentencizer.sentencize(tokens)
+        _ = [print(s) for s in sentences]
+        self.assertEqual(1, len(sentences))
+
 
 if __name__ == '__main__':
     unittest.main()
