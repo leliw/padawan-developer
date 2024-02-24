@@ -1,6 +1,6 @@
 """TypeSript tokenizer and parser"""
 from __future__ import annotations
-from typing import Iterator
+from typing import Any, Iterator
 from tokenizer.basic_tokenizer import BasicTokenizer
 from tokenizer._parser import ParseNode, BaseParser
 
@@ -98,11 +98,19 @@ class TypeScriptNode:
         """Returns (oryginal) text"""
         return self.node.unparse()
 
-    def _children_wws(self) -> Iterator[ParseNode]:
+    def find_children(self, type: str) -> Iterator[TypeScriptNode]: 
+        """Returns children of given type"""
+        for x in self._children_wws():
+            if x.node.type == type:
+                yield TypeScriptNode(self.parser, x)
+
+    def _children_wws(self) -> Iterator[TypeScriptNode]:
         for x in self.node.children:
             if x.type not in ['[NL]', '[WHITESPACE]']:
-                yield x
+                yield TypeScriptNode(self.parser, x)
 
+    def __getattr__(self, __name: str) -> Any:
+        return self.node.__getattribute__(__name)
 
 class TypeScriptClass(TypeScriptNode):
     """TypeScript class definition"""
@@ -116,10 +124,12 @@ class TypeScriptClass(TypeScriptNode):
 
     def find_methods(self) -> Iterator[TypeScriptMethod]:
         """Returns classes"""
-        body = next((x for x in self.node.children if x.type == "[BRACED]"))
-        for node in body.children:
+        body = next(self.find_children("[BRACED]"))
+        gen = body._children_wws()
+        for node in gen:
             if node.type in ["[CONSTRUCTOR]", "[IDENTIFIER]"]:
-                yield TypeScriptMethod(self.parser, node)
+                params = next(gen)
+                yield TypeScriptMethod(self.parser, node, params)
 
     def add_method(self, sentence: str) -> None:
         """Adds new method to the class"""
@@ -132,6 +142,14 @@ class TypeScriptClass(TypeScriptNode):
 
 class TypeScriptMethod(TypeScriptNode):
     """TypeScript method"""
-    def __init__(self, parser: BaseParser, node: ParseNode) -> None:
+    def __init__(self, parser: BaseParser, node: ParseNode, params: ParseNode) -> None:
         super().__init__(parser, node)
-        self.name = node.value
+        self.name = node
+        self.params = params
+
+    def add_parameter(self, sentence: str) -> None:
+        """Adds new method to the class"""
+        ins_index = len(self.params.children) - 1
+        sentence = ", " + sentence if ins_index > 2 else sentence
+        inserted = self.parser.parse(sentence)
+        self.params.children[ins_index:ins_index] = inserted.children

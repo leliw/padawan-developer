@@ -108,8 +108,29 @@ export class ProxyService {
 
         methods = list(clazz.find_methods())
         self.assertEqual(1, len(methods))
-        self.assertEqual("constructor", methods[0].name)
+        self.assertEqual("constructor", methods[0].name.unparse())
 
+
+    def test_add_method_parameter(self):
+        """Finds class methods"""
+        p = TypeScriptParser()
+        doc = p.parse_to_document(CODE)
+        clazz = next(doc.find_classes())
+
+        method = next(clazz.find_methods())
+        method.add_parameter("private http: HttpClient")
+
+        expected="""
+
+@Injectable({
+  providedIn: 'root'
+})
+export class ProxyService {
+
+  constructor(private http: HttpClient) { }
+}
+"""
+        self.assertEqual(expected, clazz.unparse())
 
 if __name__ == '__main__':
     unittest.main()
