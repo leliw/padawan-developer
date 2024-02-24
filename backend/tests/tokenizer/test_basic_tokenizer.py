@@ -21,13 +21,13 @@ class TestBasicTokenizer(unittest.TestCase):
 
     def test_tokenize(self):
         tokenizer = BasicTokenizer()
-        tokens = tokenizer.tokenize(TEST_CODE)
+        tokens = list(tokenizer.tokenize(TEST_CODE))
         tokenizer.print_tokens(tokens)
         self.assertEqual(24, len(tokens))
 
     def test_detokenize(self):
         tokenizer = BasicTokenizer()
-        tokens = tokenizer.tokenize(TEST_CODE)
+        tokens = list(tokenizer.tokenize(TEST_CODE))
         tokenizer.print_tokens(tokens)
         string = tokenizer.detokenize(tokens)
         self.assertEqual(TEST_CODE, string)
@@ -35,26 +35,25 @@ class TestBasicTokenizer(unittest.TestCase):
     def test_remove_wthitespaces(self):
         tokenizer = BasicTokenizer()
         tokens = tokenizer.tokenize(TEST_CODE)
-        t2 = tokenizer.remove_wthitespaces(tokens)
+        t2 = tokenizer.remove_whitespaces(tokens)
         string = tokenizer.detokenize(t2.values())
         self.assertEqual(TEST_CODE.replace("\n","").replace(" ", ""), string)
 
     def test_conversion_to_ids(self):
         tokenizer = BasicTokenizer()
         tokens = tokenizer.tokenize(TEST_CODE)
-        tokenizer.print_tokens(tokens)
         ids = [tokenizer._convert_token_to_id(token) for token in tokens]
         print(ids)
         self.assertEqual(24, len(ids))
     
     def test_conversion_to_tokens(self):
         tokenizer = BasicTokenizer()
-        tokens = tokenizer.tokenize(TEST_CODE)
+        tokens = list(tokenizer.tokenize(TEST_CODE))
         ids = [tokenizer._convert_token_to_id(token) for token in tokens]
         print(ids)
-        t2 = [tokenizer._convert_id_to_token(id_) for id_ in ids]   
+        t2 = [tokenizer._convert_id_to_token(id_) for id_ in ids]
         self.assertEqual(
-            [str(t) for t in tokens], 
+            [str(t) for t in tokens],
             [str(t) for t in t2]
             )
 

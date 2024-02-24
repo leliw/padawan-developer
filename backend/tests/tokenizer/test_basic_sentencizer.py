@@ -21,7 +21,7 @@ class TestBasicSentencizer(unittest.TestCase):
         "target_url": "https://example.com",
         "status": "working"
         """
-        tokens = tokenizer.tokenize(code)
+        tokens = list(tokenizer.tokenize(code))
         sentencizer = BasicSentencizer()
         sentences = sentencizer.sentencize(tokens)
         self.assertEqual(3, len(sentences))
@@ -33,13 +33,11 @@ class TestBasicSentencizer(unittest.TestCase):
         "target_url": "https://example.com",
         "status": "working"
         }"""
-        tokens = tokenizer.tokenize(code)
+        tokens = list(tokenizer.tokenize(code))
         sentencizer = BasicSentencizer()
         sentences = sentencizer.sentencize(tokens)
         self.assertEqual(1, len(sentences))
-        print(sentences[0])
         tokens2 = tokens[sentences[0].start:sentences[0].end]
-        _ = [print(t) for t in tokens2]
         sentences = sentencizer.sentencize(tokens2)
         self.assertEqual(3, len(sentences))
 
@@ -50,18 +48,16 @@ class TestBasicSentencizer(unittest.TestCase):
         "inner": { "a": "b" }
         }"""
         tokens = tokenizer.tokenize(code)
-        _ = [print(t) for t in tokens]
-        tokens = [t for t in tokenizer.remove_wthitespaces(tokens).values()]
-        _ = [print(t) for t in tokens]
+        tokens = [t for t in tokenizer.remove_whitespaces(tokens).values()]
         sentencizer = BasicSentencizer()
         sentences = sentencizer.sentencize(tokens)
         self.assertEqual(1, len(sentences))
         tokens2 = tokens[sentences[0].start:sentences[0].end]
-        # _ = [print(t) for t in tokens2]
         sentences = sentencizer.sentencize(tokens2)
         _ = [print(s) for s in sentences]
         self.assertEqual(2, len(sentences))
         self.assertEqual("\"port\":8999", sentences[0].get_body())
+        self.assertEqual("\"inner\":{\"a\":\"b\"}", sentences[1].get_body())
 
 
 

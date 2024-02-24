@@ -1,5 +1,6 @@
 """Basic tokenizer"""
-import re
+from typing import Iterator
+from ._tokenizer import Token, BaseTokenizer
 
 basic_special_characters = {
     "PLUS": '+',
@@ -12,10 +13,13 @@ basic_special_characters = {
     "RBRACE": '}',
     "LBRACKET": '[',
     "RBRACKET": ']',
+    "LT" : '<',
+    "GT" : '>',
     "EQUALS": '=',
     "COLON": ':',
     "SEMICOLON": ';',
     "COMMA": ',',
+    "DOT": '.',
     "AT": "@"
 }
 
@@ -28,36 +32,22 @@ basic_rules = [
     ("WHITESPACE", r'\s+')
 ]
 
-class Token:
-    """A simple token representation."""
 
-    PAD = "[PAD]"
-    UNK = "[UNK]"
-    MASK = "[MASK]"
-    SPACE = '[WHITESPACE]'
-    NL = '[NL]'
-    IDENTIFIER = '[IDENTIFIER]'
-
-    def __init__(self, token_type: str, value: str):
-        self.type = token_type
-        self.value = value
-
-    def __str__(self):
-        return f'Token({self.type}, {self.value})'
 
 basic_whitespace_tokens = [Token.SPACE, Token.NL]
 
-class BasicTokenizer:
+class BasicTokenizer(BaseTokenizer):
     """A simple regex-based tokenizer."""
 
     def __init__(self, special_characters = None, rules = None, keywords = None):
         """Create a new tokenizer with the given rules."""
-        self.special_characters = special_characters if special_characters else basic_special_characters
+        super().__init__()
+        self.special_characters = special_characters or basic_special_characters
         if rules is None:
             rules = basic_rules
         self.keywords = keywords
-        self.rules = [(f"[{name}]", re.compile('\\'+c)) for name, c in self.special_characters.items()]
-        self.rules += [(f"[{name}]", re.compile(pattern)) for name, pattern in rules]
+        self.add_rule_characters([(name, c) for name, c in self.special_characters.items()])
+        self.add_rule_patterns(rules)
         unique_rules = list(set([name for name, _ in self.rules]))
         # Special tokens
         self.vocab = {Token.PAD: 0, Token.UNK: 1, Token.MASK: 2}
@@ -78,53 +68,35 @@ class BasicTokenizer:
         self.id_to_token = {id_: token for token, id_ in self.vocab.items()}
         self.temp_vocab = []
 
-    def tokenize(self, text: str) -> list[Token]:
+    def tokenize(self, text: str) -> Iterator[Token]:
         """Tokenize the given text."""
-        tokens = []
-        position = 0
-        while position < len(text):
-            match = None
-            for name, pattern in self.rules:
-                match = pattern.match(text, position)
-                if match:
-                    value = match.group(0)
-                    tokens.append(Token(name, value))
-                    position = match.end()  # Update position to the end of the match
-                    break
-            if not match:
-                raise SyntaxError(f'Unexpected character: {text[position]}')
+        tokens = super().tokenize(text)
         if self.keywords:
             tokens = self._tokenize_keywords(tokens)
         return tokens
 
-    def _tokenize_keywords(self, tokens: list[Token]) -> list[Token]:
+    def _tokenize_keywords(self, tokens: Iterator[Token]) -> Iterator[Token]:
         """Convert identifiers to uppercase if they are keywords."""
-        ret = []
         for token in tokens:
             t = token.type
             v = token.value
             if t == Token.IDENTIFIER and v in self.keywords:
-                ret.append(Token(f"[{v.upper()}]", v))
+                yield Token(f"[{v.upper()}]", v)
             else:
-                ret.append(token)
-        return ret
-
-    def detokenize(self, tokens: list[Token]) -> str:
-        """Convert the given tokens back to a string."""
-        return ''.join([t.value for t in tokens])
+                yield token
 
     def print_tokens(self, tokens: list[Token]):
         print([(t.type, t.value) for t in tokens])
 
-    def remove_wthitespaces(
-            self, tokens: list[Token], whiespace_tokens: list[Token] = None
+    def remove_whitespaces(
+            self, tokens: list[Token], whitespace_tokens: list[Token] = None
             ) -> dict[int, Token]:
         """Remove whitespace and newline tokens."""
-        if whiespace_tokens is None:
-            whiespace_tokens = basic_whitespace_tokens
+        if whitespace_tokens is None:
+            whitespace_tokens = basic_whitespace_tokens
         ret = {}
         for index, token in enumerate(tokens):
-            if token.type not in whiespace_tokens:
+            if token.type not in whitespace_tokens:
                 ret[index] = token
         return ret
 
@@ -136,14 +108,15 @@ class BasicTokenizer:
             v = len(token.value)
         else:
             v = None
-        ret = (self.vocab.get(t, self.vocab[Token.UNK]), self.vocab.get(f"[{v}]", self.vocab[Token.UNK]))
+        ret = (self.vocab.get(t, self.vocab[Token.UNK]),
+                              self.vocab.get(f"[{v}]", self.vocab[Token.UNK]))
         return ret
 
     def get_temp_vocab_index(self, value: str):
         if value not in self.temp_vocab:
             self.temp_vocab.append(value)
         return self.temp_vocab.index(value)
-    
+
     def _convert_id_to_token(self, token_id):
         t = self.id_to_token.get(token_id[0], Token.UNK)
         spec = t[1:-1]
