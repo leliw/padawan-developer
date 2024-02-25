@@ -1,20 +1,15 @@
-from tokenizer._parser import BaseParser, ParseNode
-from tokenizer.basic_tokenizer import BasicTokenizer
+from typing import Iterator
+
+from .._parser import BaseParser, ParseNode
+
+from .node import TypeScriptNode
 from .clazz import TypeScriptClass
 
 
-from typing import Iterator
-
-
-class TypeScriptDocument:
+class TypeScriptDocument(TypeScriptNode):
     """Parsed TypeScript document"""
-    def __init__(self, parser: BaseParser, parse_tree: ParseNode):
-        self.parser = parser
-        self.tree = parse_tree
-
-    def unparse(self) -> str:
-        """Returns document text"""
-        return self.tree.unparse()
+    def __init__(self, parser: BaseParser, node: ParseNode):
+        super().__init__(parser, node)
 
     def is_import(self, command: ParseNode) -> bool:
         """This is import command?"""
@@ -26,7 +21,7 @@ class TypeScriptDocument:
 
     def find_imports(self) -> Iterator[ParseNode]:
         """Returns import nodes"""
-        for command in self.tree.children:
+        for command in self.node.children:
             if self.is_import(command):
                 yield command
 
@@ -34,18 +29,18 @@ class TypeScriptDocument:
         """Adds import sentence (in import group)"""
         inserted = self.parser.parse("\n" + sentence)
         imports = False
-        for index, command in enumerate(self.tree.children):
+        for index, command in enumerate(self.node.children):
             if not imports and self.is_import(command):
                 imports = True  # Import block starts
             elif imports and not self.is_import(command):
                 # Import block ended -> insert here
-                self.tree.children[index:index] = [inserted]
+                self.node.children[index:index] = [inserted]
                 return
         # No import block -> insert at beginning
-        self.tree.children = [inserted, *self.tree.children]
+        self.node.children = [inserted, *self.node.children]
 
     def find_classes(self) -> Iterator[TypeScriptClass]:
         """Returns classes"""
-        for command in self.tree.children:
+        for command in self.node.children:
             if self.is_class(command):
                 yield TypeScriptClass(self.parser, command)
