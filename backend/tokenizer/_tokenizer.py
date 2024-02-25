@@ -1,8 +1,39 @@
 """Base tokenizer"""
 import re
-
 from abc import ABC
 from typing import Iterator
+
+basic_special_characters = {
+    "PLUS": '+',
+    "MINUS": '-',
+    "TIMES": '*',
+    "DIVIDE": '/',
+    "LPAREN": '(',
+    "RPAREN": ')',
+    "LBRACE": '{',
+    "RBRACE": '}',
+    "LBRACKET": '[',
+    "RBRACKET": ']',
+    "LT" : '<',
+    "GT" : '>',
+    "EQUALS": '=',
+    "COLON": ':',
+    "SEMICOLON": ';',
+    "COMMA": ',',
+    "DOT": '.',
+    "AT": "@"
+}
+
+basic_rules = [
+    ("NUMBER", r'\d+'),
+    ("IDENTIFIER", r'[a-zA-Z_][a-zA-Z0-9_]*'),
+    ("STRING", r'"(\\.|[^"\\])*"'),
+    ('STRING', r"'(\\.|[^'\\])*'"),
+    ("NL", r'\n+'),
+    ("WHITESPACE", r'\s+')
+]
+
+basic_whitespace_tokens = ["[WHITESPACE]", "[NL]"]
 
 class Token:
     """A simple token representation."""

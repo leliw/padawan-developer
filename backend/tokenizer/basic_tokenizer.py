@@ -1,40 +1,7 @@
 """Basic tokenizer"""
 from typing import Iterator
-from ._tokenizer import Token, BaseTokenizer
+from ._tokenizer import Token, BaseTokenizer, basic_special_characters, basic_rules, basic_whitespace_tokens
 
-basic_special_characters = {
-    "PLUS": '+',
-    "MINUS": '-',
-    "TIMES": '*',
-    "DIVIDE": '/',
-    "LPAREN": '(',
-    "RPAREN": ')',
-    "LBRACE": '{',
-    "RBRACE": '}',
-    "LBRACKET": '[',
-    "RBRACKET": ']',
-    "LT" : '<',
-    "GT" : '>',
-    "EQUALS": '=',
-    "COLON": ':',
-    "SEMICOLON": ';',
-    "COMMA": ',',
-    "DOT": '.',
-    "AT": "@"
-}
-
-basic_rules = [
-    ("NUMBER", r'\d+'),
-    ("IDENTIFIER", r'[a-zA-Z_][a-zA-Z0-9_]*'),
-    ("STRING", r'"(\\.|[^"\\])*"'),
-    ('STRING', r"'(\\.|[^'\\])*'"),
-    ("NL", r'\n+'),
-    ("WHITESPACE", r'\s+')
-]
-
-
-
-basic_whitespace_tokens = [Token.SPACE, Token.NL]
 
 class BasicTokenizer(BaseTokenizer):
     """A simple regex-based tokenizer."""
