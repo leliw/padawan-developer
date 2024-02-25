@@ -30,19 +30,19 @@ class TypeScriptDocument(TypeScriptNode):
                 imports = True  # Import block starts
             elif imports and not command.children_contains("[IMPORT]"):
                 # Import block ended -> insert here
-                self.node.children[index:index] = [inserted]
+                self.node.children[index:index] = inserted.children
                 return
         # No import block -> insert at beginning
         self.node.children = [inserted, *self.node.children]
 
-    def add_interface(self, sentence: str) -> None:
+    def add_sentence_after_group(self, sentence: str, token_type: str) -> None:
         """Adds import sentence (in import group)"""
         inserted = self.parser.parse("\n\n" + sentence)
         imports = False
         for index, command in enumerate(self.get_children()):
-            if not imports and command.children_contains("[IMPORT]"):
+            if not imports and command.children_contains(token_type):
                 imports = True  # Import block starts
-            elif imports and not command.children_contains("[IMPORT]"):
+            elif imports and not command.children_contains(token_type):
                 # Import block ended -> insert here
                 self.node.children[index:index] = inserted.children
                 return
