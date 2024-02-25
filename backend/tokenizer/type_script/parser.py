@@ -1,4 +1,3 @@
-
 from .._parser import BaseParser
 from .document import TypeScriptDocument
 from .tokenizer import TypeScriptTokenizer

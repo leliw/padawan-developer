@@ -50,6 +50,37 @@ export class ProxyService {
         self.assertEqual(expected, doc.unparse())
 
 
+    def test_add_export(self):
+        """Adds import command"""
+        p = TypeScriptParser()
+        doc = p.parse_to_document(CODE)
+
+        doc.add_interface("""export interface Settings {
+    port: number;
+    target_url: string
+}""")
+
+        expected="""
+import { Injectable } from '@angular/core';
+
+export interface Settings {
+    port: number;
+    target_url: string
+}
+
+@Injectable({
+  providedIn: 'root'
+})
+export class ProxyService {
+
+  constructor() { }
+}
+"""
+        self.assertEqual(expected, doc.unparse())
+        # print(str(doc))
+        # self.fail("Not implemented")
+
+
     def test_find_classes(self):
         """Finds classes"""
         p = TypeScriptParser()
