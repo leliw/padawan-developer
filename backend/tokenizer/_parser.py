@@ -6,20 +6,35 @@ from tokenizer._tokenizer import BaseTokenizer
 
 
 class ParseNode:
-    """Node of parsed tree"""
-    def __init__(self, node_type, value, children: list[ParseNode] =None):
+    """Node of parsed tree
+    
+    Parameters
+    ----------
+    node_type: str
+    value: str
+    children: list[ParseNode]
+    """
+    def __init__(self, node_type: str, value: str = "", children: list[ParseNode] =None):
         self.type = node_type
         self.value = value
         self.children = children or []
 
-    def add_child(self, child):
-        """Adds child to node"""
+    def add_child(self, child: ParseNode) -> None:
+        """Adds child to node
+        
+        Parameters
+        ----------
+        child: ParseNode
+        """
         self.children.append(child)
 
-    def __str__(self, level=0):
-        ret = "  " * level + f"{self.type}: {self.value}\n"
+    def __str__(self, level=0, skip_types: list[str] = None):
+        if skip_types is None or self.type not in skip_types:
+            ret = "  " * level + f"{self.type}: {self.value}\n"
+        else:
+            ret = ""
         for child in self.children:
-            ret += child.__str__(level + 1)
+            ret += child.__str__(level + 1, skip_types)
         return ret
 
     def unparse(self) -> str:

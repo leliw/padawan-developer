@@ -20,3 +20,11 @@ class TypeScriptParser(BaseParser):
         tree = self.parse(text)
         doc = TypeScriptDocument(self, tree)
         return doc
+
+    def parse_file_to_document(self, file_path: str) -> TypeScriptDocument:
+        """Parse file content to document object"""
+        with open(file_path, 'r', encoding='utf-8') as file:
+            file_content = file.read()
+        tree = self.parse(file_content)
+        doc = TypeScriptDocument(self, tree)
+        return doc

@@ -6,7 +6,7 @@ class TypeScriptMethod(TypeScriptNode):
     """TypeScript method"""
     def __init__(self, parser: BaseParser, node: ParseNode, params: ParseNode) -> None:
         super().__init__(parser, node)
-        self.name = node
+        self.name = node.value
         self.params = params
 
     def add_parameter(self, sentence: str) -> None:

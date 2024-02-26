@@ -10,6 +10,7 @@ create_angular_service = [
     },
     {
         "TypeScript": [
+            { "open": "{service_file}"},
             { "add": "import { HttpClient } from '@angular/common/http';" },
             { "add":
 """export interface Status {

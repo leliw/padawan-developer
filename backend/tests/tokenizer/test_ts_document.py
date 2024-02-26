@@ -33,7 +33,7 @@ class TestTypeScriptDocument(unittest.TestCase):
         p = TypeScriptParser()
         doc = p.parse_to_document(CODE)
 
-        doc.add_import("import { HttpClient } from '@angular/common/http';")
+        doc.add_command("import { HttpClient } from '@angular/common/http';")
 
         expected="""
 import { Injectable } from '@angular/core';
@@ -58,10 +58,10 @@ export class ProxyService {
         p = TypeScriptParser()
         doc = p.parse_to_document(CODE)
 
-        doc.add_sentence_after_group("""export interface Settings {
+        doc.add_command("""export interface Settings {
     port: number;
     target_url: string
-}""", "[IMPORT]")
+}""")
 
         expected="""
 import { Injectable } from '@angular/core';
@@ -140,7 +140,7 @@ export class ProxyService {
 
         methods = list(clazz.find_methods())
         self.assertEqual(1, len(methods))
-        self.assertEqual("constructor", methods[0].name.unparse())
+        self.assertEqual("constructor", methods[0].name)
 
 
     def test_add_method_parameter(self):

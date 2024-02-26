@@ -1,4 +1,6 @@
-"""Base tokenizer"""
+"""Base tokenizer - base class for tokenizers
+
+"""
 import re
 from abc import ABC
 from typing import Iterator
@@ -36,7 +38,15 @@ basic_rules = [
 basic_whitespace_tokens = ["[WHITESPACE]", "[NL]"]
 
 class Token:
-    """A simple token representation."""
+    """A token returned by Tokenizer
+    
+    Parameter
+    ---------
+    token_type : str
+        Token type (coresponds wtih rule definition)
+    value : str
+        Real string content of token
+    """
     def __init__(self, token_type: str, value: str):
         self.type = token_type
         self.value = value

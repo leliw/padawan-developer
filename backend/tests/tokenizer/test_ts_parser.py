@@ -26,11 +26,11 @@ class TestTypeScriptParser(unittest.TestCase):
     def test_parse(self):
         """Converts code to parse tree"""
         t = TypeScriptParser()
-        tree = t.parse(CODE)
-        print(tree)
-        self.assertEqual(2, len(tree.children))
-        self.assertEqual("[COMMAND]", tree.children[0].type)
-        self.assertEqual("[COMMAND]", tree.children[1].type)
+        doc = t.parse_to_document(CODE)
+        self.assertEqual(3, len(doc.children))
+        self.assertEqual("[IMPORTS]", doc.children[0].type)
+        self.assertEqual("[INTERFACES]", doc.children[1].type)
+        self.assertEqual("[CLASSES]", doc.children[2].type)
 
 
 if __name__ == '__main__':
