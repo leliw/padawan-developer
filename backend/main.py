@@ -1,6 +1,6 @@
 """Main file for FastAPI server"""
 from typing import Union
-from fastapi import FastAPI, Request
+from fastapi import FastAPI, Request, WebSocket
 from fastapi.responses import HTMLResponse
 from pyaml_env import parse_config
 
@@ -23,6 +23,13 @@ async def read_root():
 async def read_item(item_id: int, q: Union[str, None] = None):
     """Return item_id and q"""
     return {"item_id": item_id, "q": q}
+
+@app.websocket("/api/ws")
+async def websocket_endpoint(websocket: WebSocket):
+    await websocket.accept()
+    while True:
+        data = await websocket.receive_text()
+        await websocket.send_json({"text": f"Message text was: {data}"})
 
 # Angular static files - it have to be at the end of file
 @app.get("/{full_path:path}", response_class=HTMLResponse)

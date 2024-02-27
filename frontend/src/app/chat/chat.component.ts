@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { WebsocketService } from '../websocket.service'; // Załóżmy, że ten serwis już istnieje
+import { Message, WebsocketService } from '../websocket.service'; // Załóżmy, że ten serwis już istnieje
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
@@ -12,7 +12,7 @@ import { FormsModule } from '@angular/forms';
 })
 export class ChatComponent implements OnInit {
 
-    messages: any[] = [];
+    messages: Message[] = [];
     newMessage = '';
 
     constructor(private wsService: WebsocketService) { }
@@ -20,15 +20,14 @@ export class ChatComponent implements OnInit {
     ngOnInit(): void {
         this.wsService.connect().subscribe(
             msg => {
+                msg.dir = "received";
                 this.messages.push(msg);
             }
         );
     }
 
     sendMessage(): void {
-        this.messages.push(this.newMessage);
-        console.log(this.newMessage)
-        console.log(this.messages)
+        this.messages.push({ dir:"sent", "text": this.newMessage});
         if (this.newMessage.trim().length > 0) {
             this.wsService.send({ text: this.newMessage });
             this.newMessage = '';

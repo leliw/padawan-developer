@@ -23,13 +23,13 @@
     box-shadow: 0px 0px 5px rgba(0,0,0,0.2);
   }
    
-  .message-received {
+  .received {
     align-self: flex-end;
     background-color: #007bff;
     border-radius: 20px 0px 20px 20px;
   }
   
-  .message-sent {
+  .sent {
     align-self: flex-start;
     background-color: #343a40;
     border-radius: 20px 20px 20px 0px;
