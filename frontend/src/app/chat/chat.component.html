@@ -1,6 +1,8 @@
-<div class="chat-container">
-    <div class="message sent">Cześć, jak się masz?</div>
-    <div class="message received">Wszystko dobrze, a u Ciebie?</div>
-    <div *ngFor="let message of messages" class="message {{message.dir}}">{{message.text}}</div>
+<div class="chat">
+    <div #container class="chat-container">
+        @for (message of messages; track message.text) {
+        <div class="message {{message.dir}}">{{message.text}}</div>
+        }
+    </div>
     <input [(ngModel)]="newMessage" (keyup.enter)="sendMessage()" placeholder="Type a message...">
 </div>

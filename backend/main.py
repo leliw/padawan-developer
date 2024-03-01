@@ -3,11 +3,13 @@ from typing import Union
 from fastapi import FastAPI, Request, WebSocket
 from fastapi.responses import HTMLResponse
 from pyaml_env import parse_config
+from chat import Chat
 
 from static_files import static_file_response
 
 app = FastAPI()
 config = parse_config('./config.yaml')
+chat = Chat()
 
 @app.get("/api/config")
 async def read_config():
@@ -29,7 +31,8 @@ async def websocket_endpoint(websocket: WebSocket):
     await websocket.accept()
     while True:
         data = await websocket.receive_text()
-        await websocket.send_json({"text": f"Message text was: {data}"})
+        answer = chat.get_answer(data.strip('"'))
+        await websocket.send_json({"dir": "received", "text": answer})
 
 # Angular static files - it have to be at the end of file
 @app.get("/{full_path:path}", response_class=HTMLResponse)
