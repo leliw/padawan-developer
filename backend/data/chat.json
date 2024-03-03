@@ -1,0 +1,43 @@
+{
+    "Create project xxx": {
+        "executer": "bash",
+        "script": [
+            {
+                "command": "mkdir xxx",
+                "out": ""
+            },
+            {
+                "command": "ls -la",
+                "cwd": "xxx",
+                "out": ""
+            }
+        ]
+    },
+    "Delete project xxx": {
+        "executer": "bash",
+        "script": [
+            {
+                "command": "rmdir xxx",
+                "out": ""
+            }
+        ]
+    },
+    "prepare": {
+        "executer": "bash",
+        "script": [
+            {
+                "command": "node --version",
+                "out": "v20.\\d+.\\d+"
+            },
+            {
+                "command": "npm install npm"
+            },
+            {
+                "command": "npm install @angular/cli"
+            },
+            {
+                "command": "ng version"
+            }
+        ]
+    }
+}

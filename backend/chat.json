@@ -1,8 +1,0 @@
-{
-    "prepare": [
-        { "command": "node --version", "out": "v20.\\d+.\\d+"},
-        { "command": "npm install npm"},
-        { "command": "npm install @angular/cli"},
-        { "command": "ng version"}
-    ]
-}

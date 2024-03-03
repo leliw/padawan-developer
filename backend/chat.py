@@ -1,5 +1,6 @@
 """Chat module"""
 import json
+import os
 from typing import Optional
 from pydantic import BaseModel
 
@@ -20,6 +21,9 @@ class ChatData(BaseModel):
 class Chat:
     def __init__(self, workspace: str, data: dict[str, ChatData] = None):
         self.data = data or {}
+        if not workspace.endswith("/"):
+            workspace += "/"
+        os.makedirs(workspace, exist_ok=True)
         self.bash = BashExecuter(workspace)
 
     def load(self, file_name: str):

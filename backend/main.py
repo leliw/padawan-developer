@@ -9,7 +9,8 @@ from static_files import static_file_response
 
 app = FastAPI()
 config = parse_config('./config.yaml')
-chat = Chat()
+chat = Chat(config.get("workspace"))
+chat.load("data/chat.json")
 
 @app.get("/api/config")
 async def read_config():
