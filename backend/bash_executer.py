@@ -26,7 +26,10 @@ class BashExecuter:
         tuple[str, str, str]
             (cmd, stdout, stderr)
         """
-        abs_cwd = os.path.join(self.cwd, cwd.format_map(self.params))
+        if cwd:
+            abs_cwd = os.path.join(self.cwd, cwd.format_map(self.params))
+        else:
+            abs_cwd = self.cwd
         process = subprocess.Popen(['bash'],
                                    cwd = abs_cwd,
                                    stdin=subprocess.PIPE,
