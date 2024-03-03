@@ -32,12 +32,14 @@ class Chat:
             data = json.load(file)
             self.data = {}
             for d in data.items():
+                question = d[0].strip().lower()
+                executer = d[1]["executer"].strip().lower()
                 script = [s for s in d[1]["script"]]
-                self.data[d[0]] = ChatData(executer=d[1]["executer"], script=script)
+                self.data[question] = ChatData(executer=executer, script=script)
 
     def get_answer(self, question):
         """Get answer for the question"""
-        commands = self.data.get(question)
+        commands = self.data.get(question.strip().lower())
         if commands:
             if commands.executer == "bash":
                 return self.bash_execute(commands.script)
