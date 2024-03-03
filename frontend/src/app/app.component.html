@@ -1,4 +1,9 @@
-<h1>Padawan Software Developer</h1>
-<p>Congratulations! Your app is running (ver. {{version}}). 🎉</p>
-<app-chat></app-chat>
+<div class="header">
+    <h1>Padawan Software Developer</h1>
+    <p>Congratulations! Your app is running (ver. {{version}}). 🎉</p>
+</div>
+<div class="container">
+    <app-chat class="column"></app-chat>
+    <app-terminal class="column2"></app-terminal>
+</div>
 <router-outlet></router-outlet>

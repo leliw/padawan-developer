@@ -37,19 +37,27 @@ class Chat:
                 script = [s for s in d[1]["script"]]
                 self.data[question] = ChatData(executer=executer, script=script)
 
-    def get_answer(self, question):
+    def get_answer(self, question: str) -> list[dict[str,str]]:
         """Get answer for the question"""
-        commands = self.data.get(question.strip().lower())
+        q = question.strip().lower()
+        if q == 'help':
+            cmds = [cmd for cmd in self.data.keys()]
+            return [ {"channel": "padawan", "text": "You can use:\n" + "\n".join(cmds)}]
+        commands = self.data.get(q)
         if commands:
             if commands.executer == "bash":
                 return self.bash_execute(commands.script)
-        return "I don't understand you"
-    
+        return [ {"channel": "padawan", "text": "I don't understand you"}]
+
     def bash_execute(self, script):
         """Execute bash script"""
         ret = []
         for s in script:
             cmd, out, err = self.bash.execute(s.command, s.cwd)
-            ret.append(f"{cmd}\n{out}{err}")
-        return "\n".join(ret)
+            ret.append({"channel": "bash_cmd", "text": f"$ {cmd}\n"})
+            if out:
+                ret.append({"channel": "bash_out", "text": out})
+            if err:
+                ret.append({"channel": "bash_err", "text": err})
+        return ret
 

@@ -28,13 +28,28 @@
     white-space: pre-wrap;
 }
 
-.received {
+.padawan, .bash_cmd {
     align-self: flex-end;
     background-color: #007bff;
     border-radius: 20px 0px 20px 20px;
+    text-align: end;
 }
 
-.sent {
+.bash_out {
+    align-self: flex-end;
+    font-family: 'Courier New', Courier, monospace;
+    background-color: #006600;
+    border-radius: 20px 0px 20px 20px;
+}
+
+.bash_err {
+    align-self: flex-end;
+    font-family: 'Courier New', Courier, monospace;
+    background-color: #ad0000;
+    border-radius: 20px 0px 20px 20px;
+}
+
+.master {
     align-self: flex-start;
     background-color: #343a40;
     border-radius: 20px 20px 20px 0px;
