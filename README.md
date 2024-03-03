@@ -4,7 +4,7 @@
 
 ```bash
 docker pull ghcr.io/leliw/padawan-developer:latest
-docker run -p 8000:8000 -v c:/temp/workspace:/workspace ghcr.io/leliw/padawan-developer:latest
+docker run -p 8000:8000 -v c:/temp/workspace:/app/workspace ghcr.io/leliw/padawan-developer:latest
 ```
 
 ## Run in development environment

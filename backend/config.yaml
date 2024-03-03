@@ -3,4 +3,4 @@ version: 1.0.0
 organization:
   name: "My Organization"
   address: "123 Main St"
-workspace: !ENV ${WORKSPACE:/workspace}
+workspace: !ENV ${WORKSPACE:workspace}
