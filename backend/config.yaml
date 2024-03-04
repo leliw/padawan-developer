@@ -1,2 +1,2 @@
 version: 0.0.1
-workspace: !ENV ${WORKSPACE:workspace}
+workspace: !ENV ${WORKSPACE:../workspace}
