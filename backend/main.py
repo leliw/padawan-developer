@@ -32,8 +32,9 @@ async def websocket_endpoint(websocket: WebSocket):
     await websocket.accept()
     while True:
         data = await websocket.receive_text()
-        answer = chat.get_answer(data.strip('"'))
-        await websocket.send_json({"dir": "received", "text": answer})
+        answers = chat.get_answer(data.strip('"'))
+        for answer in answers:
+            await websocket.send_json(answer)
 
 # Angular static files - it have to be at the end of file
 @app.get("/{full_path:path}", response_class=HTMLResponse)

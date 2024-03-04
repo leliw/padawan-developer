@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { WebSocketSubject } from 'rxjs/webSocket';
 
 export interface Message { 
-    dir?: string;
+    channel?: string;
     text: string;
 }
 

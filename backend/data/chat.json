@@ -13,13 +13,68 @@
             }
         ]
     },
+    "Show projects": {
+        "executer": "bash",
+        "script": [
+            {
+                "command": "ls -l"
+            }
+        ]
+    },
     "Delete project xxx": {
         "executer": "bash",
         "script": [
             {
-                "command": "rmdir xxx",
-                "out": ""
+                "command": "rm -R -f xxx"
             }
+        ]
+    },
+    "Create frontend project": {
+        "executer": "bash",
+        "script": [
+            {
+                "cwd": "xxx",
+                "command": "ng new frontend --routing"
+            },
+            {
+                "cwd": "xxx/frontend",
+                "command": "ng add @angular/material --skip-confirmation"
+            }
+        ]
+    },
+    "Create backend project": {
+        "executer": "bash",
+        "script": [
+            {
+                "cwd":"xxx",
+                "command": "mkdir backend"
+            },
+            {
+                "cwd":"xxx/backend",
+                "command": "python -m venv .env"
+            },
+            {
+                "cwd":"xxx/backend",
+                "command": "python -m pip install --upgrade pip"
+            },
+            {
+                "cwd":"xxx/backend",
+                "command": "pip install \"fastapi[all]\""
+            },
+            {
+                "cwd":"xxx/backend",
+                "command": "pip install \"uvicorn[standard]\""
+            },
+            {
+                "cwd":"xxx/backend",
+                "command": "pip install gunicorn"
+            },
+            {
+                "cwd":"xxx/backend",
+                "command": "pip freeze > requirements.txt"
+            }
+
+
         ]
     },
     "prepare": {

@@ -1,9 +1,9 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterOutlet } from '@angular/router';
-import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { ConfigService } from './config/config.service';
 import { ChatComponent } from './chat/chat.component';
+import { TerminalComponent } from './terminal/terminal.component';
 
 export interface Hello {
     Hello: string;
@@ -11,23 +11,17 @@ export interface Hello {
 @Component({
     selector: 'app-root',
     standalone: true,
-    imports: [CommonModule, RouterOutlet, HttpClientModule, ChatComponent ],
+    imports: [CommonModule, RouterOutlet, ChatComponent, TerminalComponent ],
     templateUrl: './app.component.html',
     styleUrl: './app.component.css'
 })
 
 export class AppComponent {
 
-    title = 'frontend';
-    hello = '';
     version = '';
 
-    constructor(private http: HttpClient, private config: ConfigService) {
-        this.http.get<Hello>('/api').subscribe(data => {
-            this.hello = data.Hello;
-        });
+    constructor(private config: ConfigService) {
         this.config.getConfig().subscribe(c => {
-            this.title = c.title;
             this.version = c.version;
         })
     }

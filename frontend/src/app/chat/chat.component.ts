@@ -13,7 +13,9 @@ import { FormsModule } from '@angular/forms';
 export class ChatComponent implements OnInit, AfterViewChecked {
 
     @ViewChild('container') container!: ElementRef;
-    messages: Message[] = [{ dir: "received", text: "Hello!" }];
+    messages: Message[] = [
+        { channel: "padawan", text: "Hello! I'm your padawan Master.\nTry typing 'help' if you are not familiar wih my force."}
+    ];
     newMessage = '';
 
     constructor(private wsService: WebsocketService) { }
@@ -25,7 +27,7 @@ export class ChatComponent implements OnInit, AfterViewChecked {
     }
 
     sendMessage(): void {
-        this.messages.push({ dir: "sent", "text": this.newMessage });
+        this.messages.push({ channel: "master", "text": this.newMessage });
         if (this.newMessage.trim().length > 0) {
             this.wsService.send(this.newMessage);
             this.newMessage = '';

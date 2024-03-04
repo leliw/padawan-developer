@@ -1,6 +1,2 @@
-title: !ENV ${TITLE:Marcin}
-version: 1.0.0
-organization:
-  name: "My Organization"
-  address: "123 Main St"
-workspace: !ENV ${WORKSPACE:workspace}
+version: 0.0.1
+workspace: !ENV ${WORKSPACE:../workspace}
