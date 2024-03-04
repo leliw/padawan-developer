@@ -7,12 +7,11 @@ import subprocess
 
 class BashExecuter:
     """Executes bash commands"""
-    def __init__(self, cwd: str = None, params: dict[str, str] = None) -> None:
+    def __init__(self, cwd: str = None) -> None:
         self.cwd = cwd if cwd else ""
-        self.params = params if params else {}
         self._log = logging.getLogger(__name__)
 
-    def execute(self, command: str, cwd: str = "") -> tuple[str, str, str]:
+    def execute(self, command: str, cwd: str = "", params: dict[str, str] ={}) -> tuple[str, str, str]:
         """Executes single bash command
         
         Parameters
@@ -27,7 +26,7 @@ class BashExecuter:
             (cmd, stdout, stderr)
         """
         if cwd:
-            abs_cwd = os.path.join(self.cwd, cwd.format_map(self.params))
+            abs_cwd = os.path.join(self.cwd, cwd.format_map(params))
         else:
             abs_cwd = self.cwd
         process = subprocess.Popen(['bash'],
@@ -36,7 +35,7 @@ class BashExecuter:
                                    stdout=subprocess.PIPE,
                                    stderr=subprocess.PIPE,
                                    text=True)
-        cmd = command.format_map(self.params)
+        cmd = command.format_map(params)
         out, err = process.communicate(cmd)
         if err:
             self._log.warning(err)

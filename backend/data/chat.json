@@ -1,14 +1,14 @@
 {
-    "Create project xxx": {
+    "Create project {projec_name}": {
         "executer": "bash",
         "script": [
             {
-                "command": "mkdir xxx",
+                "command": "mkdir {projec_name}",
                 "out": ""
             },
             {
                 "command": "ls -la",
-                "cwd": "xxx",
+                "cwd": "{projec_name}",
                 "out": ""
             }
         ]
@@ -21,11 +21,11 @@
             }
         ]
     },
-    "Delete project xxx": {
+    "Delete project {projec_name}": {
         "executer": "bash",
         "script": [
             {
-                "command": "rm -R -f xxx"
+                "command": "rm -R -f {projec_name}"
             }
         ]
     },
@@ -33,11 +33,11 @@
         "executer": "bash",
         "script": [
             {
-                "cwd": "xxx",
+                "cwd": "{projec_name}",
                 "command": "ng new frontend --routing"
             },
             {
-                "cwd": "xxx/frontend",
+                "cwd": "{projec_name}/frontend",
                 "command": "ng add @angular/material --skip-confirmation"
             }
         ]
@@ -46,31 +46,31 @@
         "executer": "bash",
         "script": [
             {
-                "cwd":"xxx",
+                "cwd":"{projec_name}",
                 "command": "mkdir backend"
             },
             {
-                "cwd":"xxx/backend",
+                "cwd":"{projec_name}/backend",
                 "command": "python -m venv .env"
             },
             {
-                "cwd":"xxx/backend",
+                "cwd":"{projec_name}/backend",
                 "command": "python -m pip install --upgrade pip"
             },
             {
-                "cwd":"xxx/backend",
+                "cwd":"{projec_name}/backend",
                 "command": "pip install \"fastapi[all]\""
             },
             {
-                "cwd":"xxx/backend",
+                "cwd":"{projec_name}/backend",
                 "command": "pip install \"uvicorn[standard]\""
             },
             {
-                "cwd":"xxx/backend",
+                "cwd":"{projec_name}/backend",
                 "command": "pip install gunicorn"
             },
             {
-                "cwd":"xxx/backend",
+                "cwd":"{projec_name}/backend",
                 "command": "pip freeze > requirements.txt"
             }
 

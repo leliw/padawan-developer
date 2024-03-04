@@ -5,12 +5,12 @@ import logging
 from chat import Chat
 
 CHAT_DATA = """
-{"Create project xxx": {
+{"Create project {project_name}": {
     "executer": "bash",
     "script": [
-        {"command": "mkdir xxx", "out": ""},
-        {"command": "ls -la", "cwd": "xxx", "out": ""},
-        {"command": "rmdir xxx", "out": ""}
+        {"command": "mkdir {project_name}", "out": ""},
+        {"command": "ls -la", "cwd": "{project_name}", "out": ""},
+        {"command": "rmdir {project_name}", "out": ""}
         ]
     }
 }
@@ -33,14 +33,15 @@ class TestChat(unittest.TestCase):
         self.chat.load(TMP_FILE)
 
         self.assertEqual(1, len(self.chat.data))
-        self.assertEqual(3, len(self.chat.data.get("create project xxx").script))
+        cmd, _ = self.chat.get_commands("create project xxx")
+        self.assertEqual(3, len(cmd.script))
 
 
     def test_bash_commands(self):
         self.chat.load(TMP_FILE)
 
-        resp = self.chat.get_answer("Create project xxx")[0]["text"]
-        self.assertTrue(resp.startswith("$ mkdir xxx\n"))
+        resp = self.chat.get_answer("Create project xyz")[0]["text"]
+        self.assertTrue(resp.startswith("$ mkdir xyz\n"))
 
 if __name__ == '__main__':
     unittest.main()
