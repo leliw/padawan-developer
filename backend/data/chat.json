@@ -1,15 +1,9 @@
 {
-    "Create project {projec_name}": {
+    "Create project {project_name}": {
         "executer": "bash",
         "script": [
             {
-                "command": "mkdir {projec_name}",
-                "out": ""
-            },
-            {
-                "command": "ls -la",
-                "cwd": "{projec_name}",
-                "out": ""
+                "command": "mkdir {project_name}"
             }
         ]
     },
@@ -21,11 +15,11 @@
             }
         ]
     },
-    "Delete project {projec_name}": {
+    "Delete project {project_name}": {
         "executer": "bash",
         "script": [
             {
-                "command": "rm -R -f {projec_name}"
+                "command": "rm -R -f {project_name}"
             }
         ]
     },
@@ -33,44 +27,65 @@
         "executer": "bash",
         "script": [
             {
-                "cwd": "{projec_name}",
+                "cwd": "{project_name}",
                 "command": "ng new frontend --routing"
             },
             {
-                "cwd": "{projec_name}/frontend",
+                "cwd": "{project_name}/frontend",
                 "command": "ng add @angular/material --skip-confirmation"
             }
         ]
     },
+    "Select project {project_name}": {
+        "executer": "bash",
+        "script": [
+            {
+                "command": "ls -la",
+                "cwd": "{project_name}",
+                "out": ""
+            }
+        ]        
+    },
+    "Create service {service_name}": {
+        "executer": "bash",
+        "script": [
+            {
+                "cwd": "{project_name}/frontend",
+                "command": "ng generate service services/{service_name}",
+                "out_regex": "CREATE (?P<service_full_path>[^.]+.service.ts)"
+            }
+        ]
+    },
+
     "Create backend project": {
         "executer": "bash",
         "script": [
             {
-                "cwd":"{projec_name}",
+                "cwd":"{project_name}",
                 "command": "mkdir backend"
             },
             {
-                "cwd":"{projec_name}/backend",
+                "cwd":"{project_name}/backend",
                 "command": "python -m venv .env"
             },
             {
-                "cwd":"{projec_name}/backend",
+                "cwd":"{project_name}/backend",
                 "command": "python -m pip install --upgrade pip"
             },
             {
-                "cwd":"{projec_name}/backend",
+                "cwd":"{project_name}/backend",
                 "command": "pip install \"fastapi[all]\""
             },
             {
-                "cwd":"{projec_name}/backend",
+                "cwd":"{project_name}/backend",
                 "command": "pip install \"uvicorn[standard]\""
             },
             {
-                "cwd":"{projec_name}/backend",
+                "cwd":"{project_name}/backend",
                 "command": "pip install gunicorn"
             },
             {
-                "cwd":"{projec_name}/backend",
+                "cwd":"{project_name}/backend",
                 "command": "pip freeze > requirements.txt"
             }
 

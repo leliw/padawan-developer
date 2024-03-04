@@ -11,7 +11,7 @@ class ChatDataScript(BaseModel):
     """Chat data script"""
     cwd: Optional[str] = None
     command: str
-    out: Optional[str] = None
+    out_regex: Optional[str] = None
 
 class ChatData(BaseModel):
     """Chat data"""
@@ -58,7 +58,7 @@ class Chat:
         if params:
             self.params = self.params | params
         if commands:
-            return self.execute_commands(commands, self.params)
+            return self.execute_commands(commands)
         else:
             return [ {"channel": "padawan", "text": "I don't understand you"}]
 
@@ -76,22 +76,30 @@ class Chat:
                 return (cmd, params)
         return None, None
     
-    def execute_commands(self, commands: ChatData, params: dict[str, str]) -> list[dict[str,str]]:
+    def execute_commands(self, commands: ChatData) -> list[dict[str,str]]:
         """Execute commands with proper executor"""
         if commands.executer == "bash":
-            return self.bash_execute(commands.script, params)
+            return self.bash_execute(commands.script)
         else:
             return [ {"channel": "padawan", "text": f"I can't handle {commands.executer}"}]
 
-    def bash_execute(self, script, params: dict[str, str]):
+    def bash_execute(self, script) -> list[dict[str,str]]:
         """Execute bash script"""
         ret = []
         for s in script:
-            cmd, out, err = self.bash.execute(s.command, cwd=s.cwd, params=params)
+            cmd, out, err = self.bash.execute(s.command, cwd=s.cwd, params=self.params)
             ret.append({"channel": "bash_cmd", "text": f"$ {cmd}\n"})
             if out:
+                if s.out_regex:
+                    self.parse_out(out, s.out_regex)
                 ret.append({"channel": "bash_out", "text": out})
             if err:
                 ret.append({"channel": "bash_err", "text": err})
         return ret
 
+    def parse_out(self, out: str, out_reqex: Optional[str]):
+        """Parse output with regex"""
+        if out_reqex:
+            match = re.search(out_reqex, out)
+            if match:
+                self.params = self.params | match.groupdict()
