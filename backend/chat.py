@@ -28,6 +28,7 @@ class Chat:
             workspace += "/"
         os.makedirs(workspace, exist_ok=True)
         self.bash = BashExecuter(workspace)
+        self.params ={}
 
     def load(self, file_name: str):
         """Load chat data from JSON file"""
@@ -53,8 +54,11 @@ class Chat:
         if q == 'help':
             return self.get_help_answer()
         commands, params = self.get_commands(q)
+        # merge new params with existing
+        if params:
+            self.params = self.params | params
         if commands:
-            return self.execute_commands(commands, params)
+            return self.execute_commands(commands, self.params)
         else:
             return [ {"channel": "padawan", "text": "I don't understand you"}]
 
