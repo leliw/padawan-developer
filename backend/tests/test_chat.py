@@ -26,22 +26,21 @@ class TestChat(unittest.TestCase):
             file.write(CHAT_DATA)
 
     def test_do_not_understand(self):
-        self.assertEqual(self.chat.get_answer("Sprechen sie deutsch?"), "I don't understand you")
+        self.assertEqual(self.chat.get_answer("Sprechen sie deutsch?")[0]["text"], "I don't understand you")
 
 
     def test_load(self):
         self.chat.load(TMP_FILE)
 
         self.assertEqual(1, len(self.chat.data))
-        self.assertEqual(2, len(self.chat.data.get("Create project xxx").script))
+        self.assertEqual(3, len(self.chat.data.get("create project xxx").script))
 
 
     def test_bash_commands(self):
         self.chat.load(TMP_FILE)
 
-        resp = self.chat.get_answer("Create project xxx")
-        print(resp)
-        self.assertTrue(resp.startswith("mkdir xxx\n"))
+        resp = self.chat.get_answer("Create project xxx")[0]["text"]
+        self.assertTrue(resp.startswith("$ mkdir xxx\n"))
 
 if __name__ == '__main__':
     unittest.main()
