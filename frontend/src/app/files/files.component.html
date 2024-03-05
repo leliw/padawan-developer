@@ -1,7 +1,7 @@
 <mat-tab-group mat-stretch-tabs="false" mat-align-tabs="start">
     @for (file of files; track file) {
     <mat-tab label="{{file}}">
-        Content {{file}}
+        <app-file-editor [file]="file"></app-file-editor>
     </mat-tab>
     }
 </mat-tab-group>

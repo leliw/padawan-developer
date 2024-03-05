@@ -27,6 +27,7 @@ class Chat:
         if not workspace.endswith("/"):
             workspace += "/"
         os.makedirs(workspace, exist_ok=True)
+        self.workspace = workspace
         self.bash = BashExecuter(workspace)
         self.params ={}
 
@@ -110,4 +111,12 @@ class Chat:
                 params = match.groupdict()
                 self.params = self.params | params
                 return [v for k, v in params.items() if k.endswith("_full_path")]
+            
+    def format_with_params(self, text: str) -> str:
+        """Format text with params"""
+        return text.format_map(self.params)
+    
+    def get_project_path(self) -> str:
+        """Get project path"""
+        return self.format_with_params(self.workspace + "{project_name}/")
                 
