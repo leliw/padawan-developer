@@ -3,6 +3,7 @@ import { Component, AfterViewInit, ElementRef, ViewChild, ViewEncapsulation } fr
 import { Terminal } from 'xterm';
 import { FitAddon } from 'xterm-addon-fit';
 import { WebsocketService } from '../websocket.service';
+import { filter } from 'rxjs';
 
 
 @Component({
@@ -26,11 +27,8 @@ export class TerminalComponent implements AfterViewInit {
         this.terminal.loadAddon(fitAddon);
         this.terminal.open(this.terminalDiv.nativeElement);
         fitAddon.fit();
-        this.wsService.connect().subscribe(
-            msg => {
-                if (msg.channel?.startsWith("bash"))
-                    this.terminal.write(msg.text);
-            }
-        );
+        this.wsService.connect()
+            .pipe(filter(msg => msg.channel?.startsWith("bash")))
+            .subscribe(msg => this.terminal.write(msg.text));
     }
 }

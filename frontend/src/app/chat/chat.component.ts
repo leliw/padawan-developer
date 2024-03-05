@@ -2,6 +2,7 @@ import { AfterViewChecked, Component, ElementRef, OnInit, ViewChild } from '@ang
 import { Message, WebsocketService } from '../websocket.service';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { filter } from 'rxjs';
 
 @Component({
     selector: 'app-chat',
@@ -14,16 +15,16 @@ export class ChatComponent implements OnInit, AfterViewChecked {
 
     @ViewChild('container') container!: ElementRef;
     messages: Message[] = [
-        { channel: "padawan", text: "Hello! I'm your padawan Master.\nTry typing 'help' if you are not familiar wih my force."}
+        { channel: "padawan", text: "Hello! I'm your padawan Master.\nTry typing 'help' if you are not familiar wih my force." }
     ];
     newMessage = '';
 
     constructor(private wsService: WebsocketService) { }
 
     ngOnInit(): void {
-        this.wsService.connect().subscribe(
-            msg => this.messages.push(msg)
-        );
+        this.wsService.connect()
+            .pipe(filter(msg => msg.channel !== "files"))
+            .subscribe(msg => this.messages.push(msg));
     }
 
     sendMessage(): void {
