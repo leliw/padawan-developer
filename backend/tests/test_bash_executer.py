@@ -27,7 +27,7 @@ class TestBashExecuter(unittest.TestCase):
     def setUpClass(cls) -> None:
         workspace = "tests/tmp/workspace/"
         os.makedirs(os.path.dirname(workspace), exist_ok=True)
-        cls.bash = BashExecuter(workspace, { "project_name": "my_project" })
+        cls.bash = BashExecuter(workspace)
 
     def test_execute_node_version(self):
         _, out, err = self.bash.execute("node --version")
@@ -41,9 +41,10 @@ class TestBashExecuter(unittest.TestCase):
 
 
     def test_create_project(self):
-        ret = self.bash.execute_seq(create_project)
+        params = {"project_name": "test_project"}
+        ret = self.bash.execute_seq(create_project, params)
         self.assertEqual(len(ret), 2)
-        ret = self.bash.execute_seq(delete_project)
+        ret = self.bash.execute_seq(delete_project, params)
         self.assertEqual(len(ret), 1)
         
 
