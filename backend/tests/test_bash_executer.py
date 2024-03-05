@@ -31,23 +31,22 @@ class TestBashExecuter(unittest.TestCase):
 
     def test_execute_node_version(self):
         _, out, err = self.bash.execute("node --version")
+        self.assertRegex(out, r"(v18.\d+.\d+|v20.\d+.\d+)")
+        self.assertFalse(err)
+
+    def test_execute_ng_version(self):
+        _, out, err = self.bash.execute("ng version")
         if out:
             print(out)
             print(err)
-            self.assertRegex(out, r"v20.\d+.\d+")
+            self.assertRegex(out, r"Angular CLI: 17.\d+.\d+")
             self.assertFalse(err)
         else:
-            # node not installed
+            # Angular not installed
             print(out)
             print(err)
             self.assertFalse(out)
             self.assertIn("ng: command not found", err)
-
-    def test_execute_ng_version(self):
-        _, out, err = self.bash.execute("ng version")
-        self.assertRegex(out, r"Angular CLI: 17.\d+.\d+")
-        self.assertFalse(err)
-
 
     def test_create_project(self):
         params = {"project_name": "test_project"}
