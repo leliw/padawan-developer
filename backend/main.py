@@ -17,16 +17,6 @@ async def read_config():
     """Return config from yaml file"""
     return config
 
-@app.get("/api")
-async def read_root():
-    """Return Hello World"""
-    return {"Hello": "World"}
-
-@app.get("/api/items/{item_id}")
-async def read_item(item_id: int, q: Union[str, None] = None):
-    """Return item_id and q"""
-    return {"item_id": item_id, "q": q}
-
 @app.websocket("/api/ws")
 async def websocket_endpoint(websocket: WebSocket):
     await websocket.accept()
