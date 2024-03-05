@@ -5,12 +5,22 @@ import logging
 from chat import Chat
 
 CHAT_DATA = """
-{"Create project xxx": {
+{
+    "Create project {project_name}": {
     "executer": "bash",
     "script": [
-        {"command": "mkdir xxx", "out": ""},
-        {"command": "ls -la", "cwd": "xxx", "out": ""},
-        {"command": "rmdir xxx", "out": ""}
+        {"command": "mkdir {project_name}", "out": ""},
+        {"command": "ls -la", "cwd": "{project_name}", "out": ""},
+        {"command": "rmdir {project_name}", "out": ""}
+        ]
+    },
+    "Create service {service_name}": {
+        "executer": "bash",
+        "script": [
+            {
+                "command": "echo \\"CREATE src/app/services/proxy.service.spec.ts (352 bytes)\\nCREATE src/app/services/proxy.service.ts (134 bytes)\\"",
+                "out_regex": "CREATE (?P<service_full_path>[a-z/_0-9]+.service.ts)"
+            }
         ]
     }
 }
@@ -33,14 +43,25 @@ class TestChat(unittest.TestCase):
         self.chat.load(TMP_FILE)
 
         self.assertEqual(1, len(self.chat.data))
-        self.assertEqual(3, len(self.chat.data.get("create project xxx").script))
+        cmd, _ = self.chat.get_commands("create project xxx")
+        self.assertEqual(3, len(cmd.script))
 
 
     def test_bash_commands(self):
         self.chat.load(TMP_FILE)
 
-        resp = self.chat.get_answer("Create project xxx")[0]["text"]
-        self.assertTrue(resp.startswith("$ mkdir xxx\n"))
+        resp = self.chat.get_answer("Create project xyz")[0]["text"]
+        self.assertTrue(resp.startswith("$ mkdir xyz\n"))
+
+
+    def test_get_answer(self):
+        self.chat.load(TMP_FILE)
+
+        resp = self.chat.get_answer("Create service users")
+        
+        self.assertEqual(2, len(resp))
+        self.assertEqual("src/app/services/proxy.service.ts", self.chat.params["service_full_path"])
+
 
 if __name__ == '__main__':
     unittest.main()

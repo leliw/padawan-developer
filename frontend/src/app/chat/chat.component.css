@@ -18,12 +18,12 @@
     max-width: 70%;
     padding: 10px;
     margin: 5px;
+    margin-top: 10px;
     border-radius: 20px;
     color: white;
     position: relative;
     font-size: 16px;
     line-height: 1.4;
-    margin-bottom: 10px;
     box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.2);
     white-space: pre-wrap;
 }
@@ -31,7 +31,7 @@
 .padawan, .bash_cmd {
     align-self: flex-end;
     background-color: #007bff;
-    border-radius: 20px 0px 20px 20px;
+    border-radius: 20px 20px 0px 20px;
     text-align: end;
 }
 
@@ -39,13 +39,18 @@
     align-self: flex-end;
     font-family: 'Courier New', Courier, monospace;
     background-color: #006600;
-    border-radius: 20px 0px 20px 20px;
+    border-radius: 20px 20px 0px 20px;
 }
 
 .bash_err {
     align-self: flex-end;
     font-family: 'Courier New', Courier, monospace;
     background-color: #ad0000;
+    border-radius: 20px 20px 0px 20px;
+}
+
+.bash_cmd + .bash_cmd, .bash_cmd + .bash_out, .bash_cmd + .bash_err {
+    margin-top: 0px;
     border-radius: 20px 0px 20px 20px;
 }
 
