@@ -31,8 +31,13 @@ class TestBashExecuter(unittest.TestCase):
 
     def test_execute_node_version(self):
         _, out, err = self.bash.execute("node --version")
-        self.assertRegex(out, r"v20.\d+.\d+")
-        self.assertFalse(err)
+        if out:
+            self.assertRegex(out, r"v20.\d+.\d+")
+            self.assertFalse(err)
+        else:
+            # node not installed
+            self.assertFalse(out)
+            self.assertTrue("ng: command not found" in err)
 
     def test_execute_ng_version(self):
         _, out, err = self.bash.execute("ng version")
