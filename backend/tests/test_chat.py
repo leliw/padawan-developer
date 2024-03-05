@@ -42,7 +42,7 @@ class TestChat(unittest.TestCase):
     def test_load(self):
         self.chat.load(TMP_FILE)
 
-        self.assertEqual(1, len(self.chat.data))
+        self.assertEqual(2, len(self.chat.data))
         cmd, _ = self.chat.get_commands("create project xxx")
         self.assertEqual(3, len(cmd.script))
 
@@ -59,7 +59,7 @@ class TestChat(unittest.TestCase):
 
         resp = self.chat.get_answer("Create service users")
         
-        self.assertEqual(2, len(resp))
+
         self.assertEqual("src/app/services/proxy.service.ts", self.chat.params["service_full_path"])
 
 

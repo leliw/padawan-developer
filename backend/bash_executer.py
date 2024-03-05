@@ -41,7 +41,7 @@ class BashExecuter:
             self._log.warning(err)
         return cmd, out, err
     
-    def execute_seq(self, commands: list[dict]) -> list[tuple[str, str, str]]:
+    def execute_seq(self, commands: list[dict], params: dict[str, str] ={}) -> list[tuple[str, str, str]]:
         """Executes a whole sequence of bash commands
         
         Parameters
@@ -56,7 +56,7 @@ class BashExecuter:
         ret = []
         for c in commands:
             self._log.info("$ %s", c["command"])
-            cmd, out, err = self.execute(c["command"], c.get("cwd", ""))
+            cmd, out, err = self.execute(c["command"], c.get("cwd", ""), params)
             ret.append((cmd, out, err))
             self._log.info(">>> %s", out)
             if "out" in c:
