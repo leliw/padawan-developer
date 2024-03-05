@@ -23,6 +23,16 @@
             }
         ]
     },
+    "Create readme": {
+        "executer": "bash",
+        "script": [
+            {
+                "cwd": "{project_name}",
+                "command": "touch README.md; echo \"# {project_name}\" > README.md; ls",
+                "out_regex": "(?P<readme_full_path>README.md)"
+            }
+        ]
+    },    
     "Create frontend project": {
         "executer": "bash",
         "script": [

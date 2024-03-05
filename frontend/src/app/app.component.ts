@@ -4,6 +4,7 @@ import { RouterOutlet } from '@angular/router';
 import { ConfigService } from './config/config.service';
 import { ChatComponent } from './chat/chat.component';
 import { TerminalComponent } from './terminal/terminal.component';
+import { FilesComponent } from './files/files.component';
 
 export interface Hello {
     Hello: string;
@@ -11,7 +12,7 @@ export interface Hello {
 @Component({
     selector: 'app-root',
     standalone: true,
-    imports: [CommonModule, RouterOutlet, ChatComponent, TerminalComponent ],
+    imports: [CommonModule, RouterOutlet, ChatComponent, FilesComponent, TerminalComponent ],
     templateUrl: './app.component.html',
     styleUrl: './app.component.css'
 })
