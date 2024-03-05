@@ -1,5 +1,8 @@
 # Padawan Software
 
+[![Python Unit Tests](https://github.com/leliw/padawan-developer/actions/workflows/python-tests.yml/badge.svg)](https://github.com/leliw/padawan-developer/actions/workflows/python-tests.yml)
+[![CI](https://github.com/leliw/padawan-developer/actions/workflows/main.yml/badge.svg?branch=main)](https://github.com/leliw/padawan-developer/actions/workflows/main.yml)
+
 ## Run docker image
 
 ```bash
