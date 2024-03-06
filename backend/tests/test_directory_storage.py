@@ -16,7 +16,7 @@ DIR_2_KEY = 'dir/2/key'
 class TestDirectoryStorage(unittest.TestCase):
 
     def setUp(self):
-        self.storage = DirectoryStorage("test/tmp")
+        self.storage = DirectoryStorage("tests/tmp/dir")
 
     def test_dir(self):        
         self.storage.put(DIR_KEY, 'value')

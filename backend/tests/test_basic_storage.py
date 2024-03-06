@@ -10,7 +10,7 @@ from storage.basic_storage import BasicStorage
 
 class TestBasicStorage(unittest.TestCase):
 
-    STORAGE_PATH = "test/tmp"
+    STORAGE_PATH = "tests/tmp"
 
     def test_basic_storage_string(self):
         storage = BasicStorage(self.STORAGE_PATH)
