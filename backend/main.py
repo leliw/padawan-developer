@@ -1,6 +1,7 @@
 """Main file for FastAPI server"""
+from pathlib import Path
 from typing import Union
-from fastapi import FastAPI, Request, WebSocket
+from fastapi import FastAPI, HTTPException, Request, WebSocket
 from fastapi.responses import HTMLResponse
 from pyaml_env import parse_config
 from chat import Chat
@@ -17,16 +18,6 @@ async def read_config():
     """Return config from yaml file"""
     return config
 
-@app.get("/api")
-async def read_root():
-    """Return Hello World"""
-    return {"Hello": "World"}
-
-@app.get("/api/items/{item_id}")
-async def read_item(item_id: int, q: Union[str, None] = None):
-    """Return item_id and q"""
-    return {"item_id": item_id, "q": q}
-
 @app.websocket("/api/ws")
 async def websocket_endpoint(websocket: WebSocket):
     await websocket.accept()
@@ -35,6 +26,17 @@ async def websocket_endpoint(websocket: WebSocket):
         answers = chat.get_answer(data.strip('"'))
         for answer in answers:
             await websocket.send_json(answer)
+
+@app.get("/api/files/{file_path:path}")
+async def get_file(file_path: str):
+    """Return file content"""
+    project_path = chat.get_project_path()
+    if file_path.endswith(".ts"):
+        project_path += "frontend/"
+    full_path = Path(f"{project_path}{file_path}")
+    if not full_path.exists():
+        raise HTTPException(status_code=404, detail="File not found")
+    return HTMLResponse(content=full_path.read_text(), status_code=200)
 
 # Angular static files - it have to be at the end of file
 @app.get("/{full_path:path}", response_class=HTMLResponse)

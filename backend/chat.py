@@ -27,6 +27,7 @@ class Chat:
         if not workspace.endswith("/"):
             workspace += "/"
         os.makedirs(workspace, exist_ok=True)
+        self.workspace = workspace
         self.bash = BashExecuter(workspace)
         self.params ={}
 
@@ -91,15 +92,31 @@ class Chat:
             ret.append({"channel": "bash_cmd", "text": f"$ {cmd}\n"})
             if out:
                 if s.out_regex:
-                    self.parse_out(out, s.out_regex)
+                    files = self.parse_out(out, s.out_regex)
+                    if files:
+                        ret.append({"channel": "files", "files": files})        
                 ret.append({"channel": "bash_out", "text": out})
             if err:
                 ret.append({"channel": "bash_err", "text": err})
         return ret
 
-    def parse_out(self, out: str, out_reqex: Optional[str]):
-        """Parse output with regex"""
+    def parse_out(self, out: str, out_reqex: Optional[str]) -> list[str]:
+        """Parse output with regex
+        
+        if property name ends with "_full_path" it will be returned as file.
+        """
         if out_reqex:
             match = re.search(out_reqex, out)
             if match:
-                self.params = self.params | match.groupdict()
+                params = match.groupdict()
+                self.params = self.params | params
+                return [v for k, v in params.items() if k.endswith("_full_path")]
+            
+    def format_with_params(self, text: str) -> str:
+        """Format text with params"""
+        return text.format_map(self.params)
+    
+    def get_project_path(self) -> str:
+        """Get project path"""
+        return self.format_with_params(self.workspace + "{project_name}/")
+                

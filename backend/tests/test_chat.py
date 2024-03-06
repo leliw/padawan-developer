@@ -59,7 +59,9 @@ class TestChat(unittest.TestCase):
 
         resp = self.chat.get_answer("Create service users")
         
-
+        self.assertEqual(3, len(resp))
+        self.assertEqual("files", resp[1]["channel"])
+        self.assertEqual("src/app/services/proxy.service.ts", resp[1]["files"][0])
         self.assertEqual("src/app/services/proxy.service.ts", self.chat.params["service_full_path"])
 
 

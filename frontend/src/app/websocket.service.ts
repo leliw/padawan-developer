@@ -2,8 +2,9 @@ import { Injectable } from '@angular/core';
 import { WebSocketSubject } from 'rxjs/webSocket';
 
 export interface Message { 
-    channel?: string;
+    channel: string;
     text: string;
+    files?: string[];
 }
 
 @Injectable({
