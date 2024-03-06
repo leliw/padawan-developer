@@ -1,2 +1,3 @@
 version: 0.0.1
 workspace: !ENV ${WORKSPACE:../workspace}
+storage: !ENV ${WORKSPACE:../storage}

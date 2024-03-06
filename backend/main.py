@@ -7,11 +7,13 @@ from pyaml_env import parse_config
 from chat import Chat
 
 from static_files import static_file_response
+from storage import DirectoryStorage
 
 app = FastAPI()
 config = parse_config('./config.yaml')
 chat = Chat(config.get("workspace"))
 chat.load("data/chat.json")
+storage = DirectoryStorage(config.get("storage"))
 
 @app.get("/api/config")
 async def read_config():
@@ -23,9 +25,16 @@ async def websocket_endpoint(websocket: WebSocket):
     await websocket.accept()
     while True:
         data = await websocket.receive_text()
-        answers = chat.get_answer(data.strip('"'))
+        question = data.strip('"')
+        answers = chat.get_answer(question)
+        history = storage.get("chat_history")
+        if history is None:
+            history = []
+        history.append({"channel": "master",  "text": question})
         for answer in answers:
+            history.append(answer)
             await websocket.send_json(answer)
+        storage.put("chat_history", history)
 
 @app.get("/api/files/{file_path:path}")
 async def get_file(file_path: str):
