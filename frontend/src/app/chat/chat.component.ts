@@ -3,6 +3,7 @@ import { Message, WebsocketService } from '../websocket.service';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { filter } from 'rxjs';
+import { ChatHistoryService } from '../chat-history.service';
 
 @Component({
     selector: 'app-chat',
@@ -19,9 +20,11 @@ export class ChatComponent implements OnInit, AfterViewChecked {
     ];
     newMessage = '';
 
-    constructor(private wsService: WebsocketService) { }
+    constructor(private wsService: WebsocketService, private historyService: ChatHistoryService) { }
 
     ngOnInit(): void {
+        this.historyService.get()
+            .subscribe((messages: Message[]) => this.messages = messages);
         this.wsService.connect()
             .pipe(filter(msg => msg.channel !== "files"))
             .subscribe(msg => this.messages.push(msg));

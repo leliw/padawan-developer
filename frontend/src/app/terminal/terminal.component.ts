@@ -3,7 +3,8 @@ import { Component, AfterViewInit, ElementRef, ViewChild, ViewEncapsulation } fr
 import { Terminal } from 'xterm';
 import { FitAddon } from 'xterm-addon-fit';
 import { WebsocketService } from '../websocket.service';
-import { filter } from 'rxjs';
+import { filter, of } from 'rxjs';
+import { ChatHistoryService } from '../chat-history.service';
 
 
 @Component({
@@ -18,7 +19,7 @@ export class TerminalComponent implements AfterViewInit {
     @ViewChild('terminal', { static: true }) terminalDiv!: ElementRef;
     terminal!: Terminal;
 
-    constructor(private wsService: WebsocketService) { }
+    constructor(private wsService: WebsocketService, private historyService: ChatHistoryService) { }
 
 
     ngAfterViewInit() {
@@ -27,6 +28,14 @@ export class TerminalComponent implements AfterViewInit {
         this.terminal.loadAddon(fitAddon);
         this.terminal.open(this.terminalDiv.nativeElement);
         fitAddon.fit();
+        this.historyService.get()
+            .subscribe(history => {
+                of(...history)
+                    .pipe(filter(msg => msg.channel?.startsWith("bash")))
+                    .subscribe(msg => this.terminal.write(msg.text));
+            })
+
+
         this.wsService.connect()
             .pipe(filter(msg => msg.channel?.startsWith("bash")))
             .subscribe(msg => this.terminal.write(msg.text));

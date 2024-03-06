@@ -27,14 +27,18 @@ async def websocket_endpoint(websocket: WebSocket):
         data = await websocket.receive_text()
         question = data.strip('"')
         answers = chat.get_answer(question)
-        history = storage.get("chat_history")
-        if history is None:
-            history = []
+        history = storage.get("chat_history") or []
         history.append({"channel": "master",  "text": question})
         for answer in answers:
             history.append(answer)
             await websocket.send_json(answer)
         storage.put("chat_history", history)
+
+@app.get("/api/history")
+async def get_chat_history():
+    """Return chat history"""
+    history = storage.get("chat_history") or []
+    return history
 
 @app.get("/api/files/{file_path:path}")
 async def get_file(file_path: str):
