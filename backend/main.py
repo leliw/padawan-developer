@@ -7,11 +7,14 @@ from pyaml_env import parse_config
 from chat import Chat
 
 from static_files import static_file_response
+from storage import DirectoryStorage
+import model
 
 app = FastAPI()
 config = parse_config('./config.yaml')
 chat = Chat(config.get("workspace"))
 chat.load("data/chat.json")
+storage = DirectoryStorage(config.get("storage"))
 
 @app.get("/api/config")
 async def read_config():
@@ -23,9 +26,22 @@ async def websocket_endpoint(websocket: WebSocket):
     await websocket.accept()
     while True:
         data = await websocket.receive_text()
-        answers = chat.get_answer(data.strip('"'))
+        question = data.strip('"')
+        state = storage.get("app_storage", model_class=model.ApplicationState) or model.ApplicationState()
+        chat.params = state.parameters
+        answers = chat.get_answer(question)
+        state.chat_history.append(model.ChatMessage(channel="master",  text=question))
         for answer in answers:
+            state.chat_history.append(model.ChatMessage(**answer))
             await websocket.send_json(answer)
+        state.parameters = chat.params
+        storage.put("app_storage", state, file_ext="json")
+
+@app.get("/api/app-state",response_model_exclude_none=True)
+async def get_application_state() -> model.ApplicationState:
+    """Return application state"""
+    state = storage.get("app_storage", model_class=model.ApplicationState) or model.ApplicationState()
+    return state
 
 @app.get("/api/files/{file_path:path}")
 async def get_file(file_path: str):

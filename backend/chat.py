@@ -1,5 +1,6 @@
 """Chat module"""
 import json
+import logging
 import os
 import re
 from typing import Optional
@@ -30,6 +31,7 @@ class Chat:
         self.workspace = workspace
         self.bash = BashExecuter(workspace)
         self.params ={}
+        self._log = logging.getLogger(__name__)
 
     def load(self, file_name: str):
         """Load chat data from JSON file"""

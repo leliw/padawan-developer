@@ -3,7 +3,7 @@ import { WebSocketSubject } from 'rxjs/webSocket';
 
 export interface Message { 
     channel: string;
-    text: string;
+    text?: string;
     files?: string[];
 }
 
@@ -12,10 +12,15 @@ export interface Message {
 })
 export class WebsocketService {
     private socket$: WebSocketSubject<Message>;
-    private socketUrl = 'ws://localhost:8000/api/ws'; // URL do Twojego WebSocket endpoint
+    private endpoint = '/api/ws';
 
     constructor() {
-        this.socket$ = new WebSocketSubject(this.socketUrl);
+        const url = new URL(window.origin);
+        let host = url.host;
+        // Replace the port of the host if the app is running in development mode
+        host = host.replace('localhost:4200', 'localhost:8000')
+        const socketUrl = `ws://${host}${this.endpoint}`;
+        this.socket$ = new WebSocketSubject(socketUrl);
     }
 
     public connect(): WebSocketSubject<Message> {
