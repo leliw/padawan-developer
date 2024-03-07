@@ -7,9 +7,14 @@ import logging
 import os
 import json
 import re
+from typing import TypeVar
+
+from pydantic import BaseModel
 
 class KeyNotExists(Exception):
     """Raised when key is not found"""
+
+T = TypeVar('T', bound=BaseModel)
 
 class BasicStorage:
     """Stores data on disk (key: value)"""
@@ -32,12 +37,17 @@ class BasicStorage:
             file_ext = file_ext if file_ext else "txt"
             with open(self._create_file_path(sub_path, key, file_ext), 'w', encoding="utf-8") as file:
                 file.write(value)
+        elif isinstance(value, BaseModel):
+            file_ext = file_ext if file_ext else "json"
+            json_str = value.model_dump_json()
+            with open(self._create_file_path(sub_path, key, file_ext), 'w', encoding="utf-8") as file:
+                file.write(json_str)
         else:
             file_ext = file_ext if file_ext else "json"
             with open(self._create_file_path(sub_path, key, file_ext), 'w', encoding="utf-8") as file:
-                json.dump(value, file, indent=4, default=str)
+                json.dump(value, file, indent=4)
     
-    def get(self, key: str, sub_path: str = None, file_ext: str = None) -> any:
+    def get(self, key: str, sub_path: str = None, file_ext: str = None, model_class: T = None) -> any:
         """Reads value from disk"""
         if file_ext is None:
             try:
@@ -49,6 +59,10 @@ class BasicStorage:
         if file_ext in ['txt', 'html']:
             with open(full_path, 'r', encoding="utf-8") as file:
                 return file.read()
+        elif model_class:
+            with open(full_path, 'r', encoding="utf-8") as file:
+                r= json.load(file)
+            return model_class.model_validate(r)
         elif file_ext == "json":
             with open(full_path, 'r', encoding="utf-8") as file:
                 return json.load(file)
