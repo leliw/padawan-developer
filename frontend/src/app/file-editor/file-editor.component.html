@@ -1,4 +1,10 @@
-<p>file-editor works! {{file}}</p>
 <section class="editor">
-    <pre>{{content}}</pre>
+    <ngx-codemirror
+    [(ngModel)]="content"
+    [options]="{
+      lineNumbers: true,
+      theme: 'material',
+      mode: 'markdown'
+    }"
+  ></ngx-codemirror>
 </section>
