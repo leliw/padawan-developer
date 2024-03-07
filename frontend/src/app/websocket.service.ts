@@ -3,7 +3,7 @@ import { WebSocketSubject } from 'rxjs/webSocket';
 
 export interface Message { 
     channel: string;
-    text: string;
+    text?: string;
     files?: string[];
 }
 
