@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { MatTabsModule } from '@angular/material/tabs';
 import { WebsocketService } from '../websocket.service';
 import { filter, of } from 'rxjs';
@@ -13,9 +13,12 @@ import { AppStateService } from '../app-state.service';
     templateUrl: './files.component.html',
     styleUrl: './files.component.css'
 })
-export class FilesComponent {
+export class FilesComponent implements OnChanges {
+    
+    @Input() openFile = '';
 
     files = new Set<string>();
+    selected = 0;
 
     constructor(private wsService: WebsocketService, private appService: AppStateService) {
         this.appService.get()
@@ -28,5 +31,14 @@ export class FilesComponent {
             .pipe(filter(msg => (msg.channel == "files" && msg.files !== undefined)))
             .subscribe(msg => this.files = new Set([...this.files, ...(msg.files ?? [])]));
     }
+    
+    ngOnChanges(changes: SimpleChanges): void {
+        console.log('Data changed:', changes);
+        if (changes['openFile']?.currentValue) {
+            this.files.add(changes['openFile'].currentValue);
+            this.selected = this.files.size - 1;
+        }
+    }
 
 }
+

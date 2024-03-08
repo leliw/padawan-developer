@@ -1,6 +1,6 @@
 import { CollectionViewer, SelectionChange, DataSource } from '@angular/cdk/collections';
 import { FlatTreeControl } from '@angular/cdk/tree';
-import { Component } from '@angular/core';
+import { Component, EventEmitter, Output } from '@angular/core';
 import { BehaviorSubject, merge, Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
@@ -94,6 +94,8 @@ export class DynamicDataSource implements DataSource<DirTreeItem> {
 })
 export class DirTreeComponent {
 
+    @Output() file = new EventEmitter<string>();
+    
     treeControl: FlatTreeControl<DirTreeItem>;
     dataSource: DynamicDataSource;
 
@@ -106,5 +108,9 @@ export class DirTreeComponent {
     getLevel = (node: DirTreeItem) => node.level;
     isExpandable = (node: DirTreeItem) => node.has_items;
     hasChild = (_: number, _nodeData: DirTreeItem) => _nodeData.has_items;
+
+    openFile(node: DirTreeItem) {
+        this.file.emit(node.path);
+    }
     
 }
