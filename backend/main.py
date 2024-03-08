@@ -1,10 +1,11 @@
 """Main file for FastAPI server"""
 from pathlib import Path
-from typing import Union
+from typing import List, Union
 from fastapi import FastAPI, HTTPException, Request, WebSocket
 from fastapi.responses import HTMLResponse
 from pyaml_env import parse_config
 from chat import Chat
+from dir_tree import DirItem, DirTree, DirectoryNotFoundException
 
 from static_files import static_file_response
 from storage import DirectoryStorage
@@ -15,6 +16,7 @@ config = parse_config('./config.yaml')
 chat = Chat(config.get("workspace"))
 chat.load("data/chat.json")
 storage = DirectoryStorage(config.get("storage"))
+dirTree = DirTree(config.get("workspace"))
 
 @app.get("/api/config")
 async def read_config():
@@ -42,6 +44,14 @@ async def get_application_state() -> model.ApplicationState:
     """Return application state"""
     state = storage.get("app_storage", model_class=model.ApplicationState) or model.ApplicationState()
     return state
+
+@app.get("/api/dir-tree", response_model=List[DirItem])
+def get_subdirs(path: str):
+    try:
+        return dirTree.list_items(path)
+    except DirectoryNotFoundException as e:
+        raise HTTPException(status_code=404, detail=e.message)
+
 
 @app.get("/api/files/{file_path:path}")
 async def get_file(file_path: str):
