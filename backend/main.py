@@ -56,9 +56,10 @@ def get_subdirs(path: str):
 @app.get("/api/files/{file_path:path}")
 async def get_file(file_path: str):
     """Return file content"""
+    if file_path.startswith("/"):
+        file_path = file_path[1:]
+    chat.params['project_name'] = ""
     project_path = chat.get_project_path()
-    if file_path.endswith(".ts"):
-        project_path += "frontend/"
     full_path = Path(f"{project_path}{file_path}")
     if not full_path.exists():
         raise HTTPException(status_code=404, detail="File not found")
