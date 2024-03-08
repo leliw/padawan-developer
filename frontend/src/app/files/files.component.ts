@@ -34,10 +34,10 @@ export class FilesComponent implements OnChanges {
     }
     
     ngOnChanges(changes: SimpleChanges): void {
-        console.log('Data changed:', changes);
         if (changes['openFile']?.currentValue) {
             this.files.add(changes['openFile'].currentValue);
-            this.selected = this.files.size - 1;
+            const arrayFromSet = Array.from(this.files);
+            this.selected = arrayFromSet.indexOf(this.openFile);
         }
     }
 
