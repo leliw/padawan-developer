@@ -38,7 +38,7 @@ class DirTree:
                 items.append(DirItem(name=item, path=item_path, is_dir=True, has_items=bool(subitems)))
             elif files_include:
                 items.append(DirItem(name=item, path=item_path, is_dir=False, has_items=False))
-        return items
+        return sorted(items, key=lambda x: (not x.is_dir, x.name))
 
     def _create_full_path(self, path: str) -> tuple[str, str]:
         if path.startswith("/"):
