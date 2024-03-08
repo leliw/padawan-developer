@@ -45,5 +45,7 @@ export class AppComponent {
     openFile(file: string) {
         this.file = file;
         this.files = new Set(this.files.add(file));
+        // If user opens a file, close tab and try open again
+        setTimeout(() => this.file = "", 1000);
     }
 }

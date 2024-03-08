@@ -3,6 +3,7 @@
     <mat-tab>
         <ng-template mat-tab-label>
             {{file}}
+            <button class="close" mat-icon-button (click)="removeTab($index)"><mat-icon inline="True">close</mat-icon></button>
         </ng-template>
         <ng-template matTabContent>
             <app-file-editor [file]="file"></app-file-editor>

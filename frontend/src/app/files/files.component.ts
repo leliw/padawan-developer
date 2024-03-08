@@ -4,12 +4,13 @@ import { WebsocketService } from '../websocket.service';
 import { filter, of } from 'rxjs';
 import { FileEditorComponent } from '../file-editor/file-editor.component';
 import { AppStateService } from '../app-state.service';
+import { MatIconModule } from '@angular/material/icon';
 
 
 @Component({
     selector: 'app-files',
     standalone: true,
-    imports: [MatTabsModule, FileEditorComponent],
+    imports: [MatTabsModule, FileEditorComponent, MatIconModule],
     templateUrl: './files.component.html',
     styleUrl: './files.component.css'
 })
@@ -40,5 +41,8 @@ export class FilesComponent implements OnChanges {
         }
     }
 
+    removeTab(index: number) {
+        this.files.delete([...this.files][index]);
+    }
 }
 
