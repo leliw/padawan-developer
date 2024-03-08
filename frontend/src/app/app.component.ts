@@ -5,6 +5,7 @@ import { ConfigService } from './config/config.service';
 import { ChatComponent } from './chat/chat.component';
 import { TerminalComponent } from './terminal/terminal.component';
 import { FilesComponent } from './files/files.component';
+import { DirTreeComponent } from './dir-tree/dir-tree.component';
 
 export interface Hello {
     Hello: string;
@@ -12,7 +13,7 @@ export interface Hello {
 @Component({
     selector: 'app-root',
     standalone: true,
-    imports: [CommonModule, RouterOutlet, ChatComponent, FilesComponent, TerminalComponent ],
+    imports: [CommonModule, RouterOutlet, ChatComponent, DirTreeComponent, FilesComponent, TerminalComponent],
     templateUrl: './app.component.html',
     styleUrl: './app.component.css'
 })
