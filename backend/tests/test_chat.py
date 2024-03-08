@@ -57,11 +57,12 @@ class TestChat(unittest.TestCase):
     def test_get_answer(self):
         self.chat.load(TMP_FILE)
 
+        _ = self.chat.get_answer("Create project xyz")
         resp = self.chat.get_answer("Create service users")
         
         self.assertEqual(3, len(resp))
         self.assertEqual("files", resp[1]["channel"])
-        self.assertEqual("src/app/services/proxy.service.ts", resp[1]["files"][0])
+        self.assertEqual("/xyz/src/app/services/proxy.service.ts", resp[1]["files"][0])
         self.assertEqual("src/app/services/proxy.service.ts", self.chat.params["service_full_path"])
 
 
