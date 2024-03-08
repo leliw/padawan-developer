@@ -1,0 +1,9 @@
+mat-tab-group {
+    max-width: 50vw;
+}
+button.close {
+    color: var(--mdc-icon-button-icon-color);
+    border: unset !important;
+    background-color: unset !important;
+    padding-right: 0px;
+}

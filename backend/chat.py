@@ -112,7 +112,7 @@ class Chat:
             if match:
                 params = match.groupdict()
                 self.params = self.params | params
-                return [v for k, v in params.items() if k.endswith("_full_path")]
+                return [self.format_with_params("/{project_name}/" + v) for k, v in params.items() if k.endswith("_full_path")]
             
     def format_with_params(self, text: str) -> str:
         """Format text with params"""
