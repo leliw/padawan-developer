@@ -1,7 +1,6 @@
-<div class="header">
+<header>
     <h1>Padawan Software Developer</h1>
-    <p>Congratulations! Your app is running (ver. {{version}}). 🎉</p>
-</div>
+</header>
 <main>
     <app-chat class="column"></app-chat>
     <app-dir-tree (file)="openFile($event)" class="column"></app-dir-tree>
@@ -9,3 +8,4 @@
     <app-terminal class="column"></app-terminal>
 </main>
 <router-outlet></router-outlet>
+<footer>ver. {{version}} 🎉</footer>

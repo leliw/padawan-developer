@@ -1,9 +1,21 @@
 mat-tab-group {
-    max-width: 50vw;
+    height: 100%;
+    width: 100%;
+    border: 1px solid #ccc;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
 }
+
 button.close {
     color: var(--mdc-icon-button-icon-color);
     border: unset !important;
     background-color: unset !important;
     padding-right: 0px;
+}
+
+
+  ::ng-deep .mat-mdc-tab-body-wrapper {
+    display: flex;
+    flex: 1;
 }

@@ -1,17 +1,19 @@
 .chat {
-    height: 80%;
+    height: 100%;
     max-width: 600px;
     margin: auto;
+    border: 1px solid #ccc;
+    box-sizing: border-box;
 }
 
 .chat-container {
-    height: 100%;
-    border: 1px solid #ccc;
+    height: calc(100% - 1em - 14px);
     padding: 10px;
     overflow-y: scroll;
     position: relative;
     display: flex;
     flex-direction: column;
+    box-sizing: border-box;
 }
 
 .message {
@@ -62,7 +64,12 @@
 }
 
 input {
+    height: calc(1em + 14px);
     width: 100%;
     padding: 5px;
+    border-top: 1px solid #ccc;
+    border-left: none;
+    border-right: none;
+    border-bottom: none;
     box-sizing: border-box;
 }
