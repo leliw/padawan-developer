@@ -1,6 +1,19 @@
-<header>
-    <h1>Padawan Software Developer</h1>
-</header>
+<mat-toolbar>
+    <button mat-icon-button aria-label="Menu">
+        <mat-icon>menu</mat-icon>
+    </button>
+    <span>Padawan Software Developer - your coding assistant</span>
+    <span class="flex-spacer"></span>
+    <button mat-icon-button matTooltip="Chat" aria-label="Chat">
+        <mat-icon>forum</mat-icon>
+    </button>
+    <button mat-icon-button matTooltip="Knowledge base" aria-label="Knowledge base">
+        <mat-icon>menu_book</mat-icon>
+    </button>
+    <button mat-icon-button matTooltip="Train AI model" aria-label="Train AI model">
+        <mat-icon>school</mat-icon>
+    </button>
+</mat-toolbar>
 <main>
     <app-chat class="column"></app-chat>
     <app-dir-tree (file)="openFile($event)" class="column"></app-dir-tree>
@@ -8,4 +21,4 @@
     <app-terminal class="column"></app-terminal>
 </main>
 <router-outlet></router-outlet>
-<footer>ver. {{version}} 🎉</footer>
+<footer>ver. {{version}}</footer>

@@ -9,6 +9,10 @@ import { DirTreeComponent } from './dir-tree/dir-tree.component';
 import { WebsocketService } from './websocket.service';
 import { AppStateService } from './app-state.service';
 import { filter, of } from 'rxjs';
+import { MatIconModule } from '@angular/material/icon';
+import { MatButtonModule } from '@angular/material/button';
+import { MatToolbarModule } from '@angular/material/toolbar';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 export interface Hello {
     Hello: string;
@@ -16,7 +20,7 @@ export interface Hello {
 @Component({
     selector: 'app-root',
     standalone: true,
-    imports: [CommonModule, RouterOutlet, ChatComponent, DirTreeComponent, FilesComponent, TerminalComponent],
+    imports: [CommonModule, RouterOutlet, ChatComponent, DirTreeComponent, FilesComponent, TerminalComponent, MatToolbarModule, MatTooltipModule, MatIconModule, MatButtonModule],
     templateUrl: './app.component.html',
     styleUrl: './app.component.css'
 })
@@ -41,7 +45,7 @@ export class AppComponent {
             .pipe(filter(msg => (msg.channel == "files" && msg.files !== undefined)))
             .subscribe(msg => this.files = new Set([...this.files, ...(msg.files ?? [])]));
     }
-    
+
     openFile(file: string) {
         this.file = file;
         this.files = new Set(this.files.add(file));
