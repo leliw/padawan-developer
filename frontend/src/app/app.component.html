@@ -15,10 +15,6 @@
     </button>
 </mat-toolbar>
 <main>
-    <app-chat class="column"></app-chat>
-    <app-dir-tree (file)="openFile($event)" class="column"></app-dir-tree>
-    <app-files [openFile]="file" class="column"></app-files>
-    <app-terminal class="column"></app-terminal>
+    <router-outlet></router-outlet>
 </main>
-<router-outlet></router-outlet>
 <footer>ver. {{version}}</footer>
