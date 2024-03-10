@@ -11,12 +11,16 @@
 
 footer {
     flex: 0 0 auto;
-    padding: 0em  0.5em 0.5em 0.5em;
+    padding: 0em 0.5em 0.5em 0.5em;
     text-align: right;
     height: 1em;
 }
 
 main {
     width: 100%;
-    height: calc(100% - 1.5em - 48px);
+    height: calc(100% - 1.5em - var(--mat-toolbar-standard-height));
+}
+
+button.mat-primary {
+    pointer-events: none;
 }

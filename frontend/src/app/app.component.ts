@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterOutlet } from '@angular/router';
+import { RouterModule, RouterOutlet } from '@angular/router';
 import { ConfigService } from './config/config.service';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
@@ -14,7 +14,7 @@ export interface Hello {
 @Component({
     selector: 'app-root',
     standalone: true,
-    imports: [CommonModule, RouterOutlet, MatToolbarModule, MatTooltipModule, MatIconModule, MatButtonModule],
+    imports: [CommonModule, RouterOutlet, MatToolbarModule, MatTooltipModule, MatIconModule, MatButtonModule, RouterModule ],
     templateUrl: './app.component.html',
     styleUrl: './app.component.css'
 })
