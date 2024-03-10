@@ -14,7 +14,7 @@ import model
 app = FastAPI()
 config = parse_config('./config.yaml')
 chat = Chat(config.get("workspace"))
-chat.load("data/project.json")
+chat.load("data/Project.json")
 chat.load("data/Angular.json")
 chat.load("data/Python.json")
 storage = DirectoryStorage(config.get("storage"))
