@@ -5,36 +5,22 @@
     height: 100%
 }
 
+.flex-spacer {
+    flex: 1 1 auto;
+}
+
 footer {
     flex: 0 0 auto;
-    padding: 0em  0.5em 0.5em 0.5em;
+    padding: 0em 0.5em 0.5em 0.5em;
     text-align: right;
     height: 1em;
 }
 
 main {
-    flex: 1;
-    display: flex;
-    flex-direction: row;
     width: 100%;
-    height: calc(100% - 1.5em - 48px);
+    height: calc(100% - 1.5em - var(--mat-toolbar-standard-height));
 }
 
-.column,
-.column2 {
-    padding: 0.25em;
-    height: 100%;
-    box-sizing: border-box;
-}
-
-.column {
-    flex: 1;
-}
-
-.column2 {
-    flex: 2;
-}
-
-.flex-spacer {
-    flex: 1 1 auto;
+button.mat-primary {
+    pointer-events: none;
 }
