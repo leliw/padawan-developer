@@ -1,0 +1,46 @@
+{
+    "Create project {project_name}": {
+        "executer": "bash",
+        "script": [
+            {
+                "command": "mkdir {project_name}"
+            }
+        ]
+    },
+    "Show projects": {
+        "executer": "bash",
+        "script": [
+            {
+                "command": "ls -l"
+            }
+        ]
+    },
+    "Select project {project_name}": {
+        "executer": "bash",
+        "script": [
+            {
+                "command": "ls -la",
+                "cwd": "{project_name}",
+                "out": ""
+            }
+        ]        
+    },
+    "Delete project {project_name}": {
+        "executer": "bash",
+        "script": [
+            {
+                "command": "rm -R -f {project_name}"
+            }
+        ]
+    },
+    "Create readme": {
+        "executer": "bash",
+        "script": [
+            {
+                "cwd": "{project_name}",
+                "command": "touch README.md; echo \"# {project_name}\" > README.md; ls",
+                "out_regex": "(?P<readme_full_path>README.md)"
+            }
+        ]
+    }
+}

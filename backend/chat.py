@@ -16,6 +16,7 @@ class ChatDataScript(BaseModel):
 
 class ChatData(BaseModel):
     """Chat data"""
+    question: str
     regex: str
     params: list[str]
     executer: str
@@ -24,7 +25,7 @@ class ChatData(BaseModel):
 
 class Chat:
     def __init__(self, workspace: str, data: dict[str, ChatData] = None):
-        self.data = data or {}
+        self.data = data or []
         if not workspace.endswith("/"):
             workspace += "/"
         os.makedirs(workspace, exist_ok=True)
@@ -37,13 +38,12 @@ class Chat:
         """Load chat data from JSON file"""
         with open(file_name, "tr", encoding="utf-8") as file:
             data = json.load(file)
-            self.data = {}
             for d in data.items():
                 question = d[0].strip().lower()
                 regex, params = self._question2regex(question)
                 executer = d[1]["executer"].strip().lower()
                 script = [s for s in d[1]["script"]]
-                self.data[question] = ChatData(regex=regex, params=params, executer=executer, script=script)
+                self.data.append(ChatData(question=question, regex=regex, params=params, executer=executer, script=script))
 
     def _question2regex(self, question: str) -> tuple[str, list[str]]:
         """Convert question to regex"""
@@ -63,16 +63,16 @@ class Chat:
         if commands:
             return self.execute_commands(commands)
         else:
-            return [ {"channel": "padawan", "text": "I don't understand you"}]
+            return [{"channel": "padawan", "text": "I don't understand you"}]
 
     def get_help_answer(self) -> list[dict[str,str]]:
         """Returns help message with available commands"""
-        cmds = [cmd for cmd in self.data.keys()]
-        return [ {"channel": "padawan", "text": "You can use:\n" + "\n".join(cmds)}]
+        cmds = [cmd.question for cmd in self.data]
+        return [{"channel": "padawan", "text": "You can use:\n" + "\n".join(cmds)}]
 
     def get_commands(self, question: str) -> Optional[tuple[ChatData, dict[str,str]]]:
         """Get commands for the question"""
-        for cmd in self.data.values():
+        for cmd in self.data:
             match = re.search(cmd.regex, question)
             if match:
                 params = match.groupdict()

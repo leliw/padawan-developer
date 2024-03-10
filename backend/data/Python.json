@@ -1,0 +1,37 @@
+{
+    "Create backend project": {
+        "executer": "bash",
+        "script": [
+            {
+                "cwd":"{project_name}",
+                "command": "mkdir backend"
+            },
+            {
+                "cwd":"{project_name}/backend",
+                "command": "python -m venv .env"
+            },
+            {
+                "cwd":"{project_name}/backend",
+                "command": "python -m pip install --upgrade pip"
+            },
+            {
+                "cwd":"{project_name}/backend",
+                "command": "pip install \"fastapi[all]\""
+            },
+            {
+                "cwd":"{project_name}/backend",
+                "command": "pip install \"uvicorn[standard]\""
+            },
+            {
+                "cwd":"{project_name}/backend",
+                "command": "pip install gunicorn"
+            },
+            {
+                "cwd":"{project_name}/backend",
+                "command": "pip freeze > requirements.txt"
+            }
+
+
+        ]
+    }
+}

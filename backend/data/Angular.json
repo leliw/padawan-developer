@@ -1,0 +1,43 @@
+{
+    "Create frontend project": {
+        "executer": "bash",
+        "script": [
+            {
+                "cwd": "{project_name}",
+                "command": "ng new frontend --routing"
+            },
+            {
+                "cwd": "{project_name}/frontend",
+                "command": "ng add @angular/material --skip-confirmation"
+            }
+        ]
+    },
+    "Create service {service_name}": {
+        "executer": "bash",
+        "script": [
+            {
+                "cwd": "{project_name}/frontend",
+                "command": "ng generate service services/{service_name}",
+                "out_regex": "CREATE (?P<service_full_path>[^.]+.service.ts)"
+            }
+        ]
+    },
+    "prepare": {
+        "executer": "bash",
+        "script": [
+            {
+                "command": "node --version",
+                "out": "v20.\\d+.\\d+"
+            },
+            {
+                "command": "npm install npm"
+            },
+            {
+                "command": "npm install @angular/cli"
+            },
+            {
+                "command": "ng version"
+            }
+        ]
+    }
+}
