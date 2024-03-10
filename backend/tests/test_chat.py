@@ -40,10 +40,11 @@ class TestChat(unittest.TestCase):
 
 
     def test_load(self):
-        self.chat.load(TMP_FILE)
-
-        self.assertEqual(2, len(self.chat.data))
-        cmd, _ = self.chat.get_commands("create project xxx")
+        chat = Chat(WORKSPACE)
+        chat.load(TMP_FILE)
+        self.assertEqual(2, len(chat.data))
+        cmd, _ = chat.get_commands("create project xxx")
+        print(cmd.script)
         self.assertEqual(3, len(cmd.script))
 
 
