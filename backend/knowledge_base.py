@@ -53,5 +53,6 @@ class KnowledgeBaseService:
     def add_file(self, path: str, name: str):
         self.kb.add_file(path, name)
 
-    def get_node(self, path: str) -> Node:
-        return self.kb.get_node(path)
+    def get_node(self, path: str):
+        parts = path.split(".")
+        return self.storage.get(parts[0], file_ext=parts[1])

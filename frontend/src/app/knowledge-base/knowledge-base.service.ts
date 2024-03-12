@@ -37,4 +37,8 @@ export class KnowledgeBaseService {
             );
     }
 
+    getContent(path: string): Observable<any> {
+        let params = new HttpParams().append('path', path);
+        return this.httpClient.get<any>(`${this.endpoint}/content`, { params: params });
+    }
 }

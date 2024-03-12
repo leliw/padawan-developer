@@ -9,8 +9,9 @@ from dir_tree import DirItem, DirTree, DirectoryNotFoundException
 
 import model
 from static_files import static_file_response
-from storage import DirectoryStorage, DirectoryItem
+from storage import DirectoryStorage, DirectoryItem, KeyNotExists
 from knowledge_base import KnowledgeBaseService
+
 
 app = FastAPI()
 config = parse_config('./config.yaml')
@@ -74,6 +75,13 @@ def get_knowledge_base_items(path: str):
     try:
         return kbService.list_items(path)
     except DirectoryNotFoundException as e:
+        raise HTTPException(status_code=404, detail=e.message)
+    
+@app.get("/api/kb/content")
+def get_knowledge_base_item_content(path: str):
+    try:
+        return kbService.get_node(path)
+    except KeyNotExists as e:
         raise HTTPException(status_code=404, detail=e.message)
 
 # Angular static files - it have to be at the end of file

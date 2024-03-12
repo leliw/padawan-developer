@@ -110,7 +110,7 @@ class BasicStorage:
         files = glob.glob(full_path)
         self._log.debug(files)
         if not files:
-            raise KeyNotExists
+            raise KeyNotExists(key)
         file_ext = os.path.splitext(files[0])[1][1:]
         self._log.debug(file_ext)
         return file_ext

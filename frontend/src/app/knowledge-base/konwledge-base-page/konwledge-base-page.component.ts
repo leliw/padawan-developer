@@ -9,16 +9,17 @@ import { DynamicDataSource } from '../../utils/DynamicTree';
 import { CommonModule } from '@angular/common';
 
 @Component({
-  selector: 'app-konwledge-base-page',
-  standalone: true,
-  imports: [MatTreeModule, MatButtonModule, MatIconModule, MatProgressBarModule, CommonModule],
-  templateUrl: './konwledge-base-page.component.html',
-  styleUrl: './konwledge-base-page.component.css'
+    selector: 'app-konwledge-base-page',
+    standalone: true,
+    imports: [MatTreeModule, MatButtonModule, MatIconModule, MatProgressBarModule, CommonModule],
+    templateUrl: './konwledge-base-page.component.html',
+    styleUrl: './konwledge-base-page.component.css'
 })
 export class KonwledgeBasePageComponent {
 
     treeControl: FlatTreeControl<DirectoryItem>;
     dataSource: DynamicDataSource<DirectoryItem>;
+    content!: string;
 
     constructor(private service: KnowledgeBaseService) {
         this.treeControl = new FlatTreeControl<DirectoryItem>(
@@ -30,7 +31,8 @@ export class KonwledgeBasePageComponent {
     }
 
     open(node: DirectoryItem) {
-        console.log(node);
+        this.service.getContent(node.path)
+            .subscribe(data => this.content = data);
     }
 
 }
