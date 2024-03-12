@@ -2,7 +2,7 @@
 import os
 from typing import List
 from fastapi import HTTPException
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 class DirectoryNotFoundException(Exception):
     def __init__(self, path: str, message: str = None):
@@ -14,8 +14,8 @@ class DirItem(BaseModel):
     """Directory item"""
     name: str
     path: str
-    is_dir: bool
-    has_items: bool
+    is_dir: bool = Field(..., alias="isDir")
+    has_children: bool = Field(..., alias="hasChildren")
 
 class DirTree:
     def __init__(self, cwd: str):
@@ -35,9 +35,9 @@ class DirTree:
             item_full_path = os.path.join(full_path, item)
             if os.path.isdir(item_full_path):
                 subitems = files_include or [sub for sub in os.listdir(item_full_path) if os.path.isdir(os.path.join(item_full_path, sub))]
-                items.append(DirItem(name=item, path=item_path, is_dir=True, has_items=bool(subitems)))
+                items.append(DirItem(name=item, path=item_path, isDir=True, hasChildren=bool(subitems)))
             elif files_include:
-                items.append(DirItem(name=item, path=item_path, is_dir=False, has_items=False))
+                items.append(DirItem(name=item, path=item_path, isDir=False, hasChildren=False))
         return sorted(items, key=lambda x: (not x.is_dir, x.name))
 
     def _create_full_path(self, path: str) -> tuple[str, str]:

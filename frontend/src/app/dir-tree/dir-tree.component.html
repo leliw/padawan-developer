@@ -5,8 +5,8 @@
         </button>
         {{node.name}}
     </mat-tree-node>
-    <mat-tree-node *matTreeNodeDef="let node; when: hasChild" matTreeNodePadding>
-        @if (node.has_items) {
+    <mat-tree-node *matTreeNodeDef="let node; when: dataSource.hasChildren" matTreeNodePadding>
+        @if (node.hasChildren) {
         <button mat-icon-button [attr.aria-label]="'Toggle ' + node.name" matTreeNodeToggle>
             <mat-icon>{{treeControl.isExpanded(node) ? 'folder_open' : 'folder'}}</mat-icon>
         </button>

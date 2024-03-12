@@ -6,10 +6,20 @@ The key can contain any number "/" to create a tree of directories.
 import logging
 import os
 from pathlib import Path
+from typing import List
+
+from pydantic import BaseModel, Field
 
 
 from .basic_storage import BasicStorage
 
+class DirectoryItem(BaseModel):
+    """Directory item"""
+    name: str
+    path: str
+    is_dir: bool = Field(..., alias="isDir")
+    is_leaf: bool = Field(..., alias="isLeaf")
+    has_children: bool = Field(..., alias="hasChildren")
 
 class DirectoryStorage(BasicStorage):
     """Stores data on disk in directories (tree)"""
@@ -17,11 +27,27 @@ class DirectoryStorage(BasicStorage):
         super().__init__(base_path)
         self._log = logging.getLogger(__name__)
 
-    def get_directory_tree(self, sub_path: str = None) -> list:
+    def list_items(self, sub_path: str, files_include=True) -> List[DirectoryItem]:
+        """List items in a directory"""
+        sub_path = sub_path.removeprefix("/") if sub_path else None
+        full_path = Path(os.path.join(self._base_path, sub_path) if sub_path else self._base_path)
+        items = []
+        for item in os.listdir(full_path):
+            item_path = os.path.join("/", sub_path, item)
+            item_full_path = os.path.join(full_path, item)
+            if os.path.isdir(item_full_path):
+                subitems = [sub for sub in os.listdir(item_full_path) if os.path.isdir(os.path.join(item_full_path, sub))]
+                items.append(DirectoryItem(name=item, path=item_path, isDir=True, isLeaf=not bool(subitems), hasChildren=bool(subitems)))
+            elif files_include:
+                items.append(DirectoryItem(name=item, path=item_path, isDir=False, isLeaf=True, hasChildren=False))
+        return sorted(items, key=lambda x: (not x.is_dir, x.name))
+
+    def get_directory_tree(self, sub_path: str = None, include_files = False) -> list:
         """Returns tree of directories in storage"""
-        sub_path = Path(sub_path if sub_path else self._base_path)
-        if sub_path.is_dir():
-            children = [self._get_directory_children(e) for e in sub_path.iterdir()]
+        sub_path = sub_path.removeprefix("/") if sub_path else None
+        full_path = Path(os.path.join(self._base_path, sub_path) if sub_path else self._base_path)
+        if include_files or full_path.is_dir():
+            children = [self._get_directory_children(e) for e in full_path.iterdir()]
             if children:
                 return children
         return []

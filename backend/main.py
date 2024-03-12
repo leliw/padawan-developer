@@ -7,9 +7,10 @@ from pyaml_env import parse_config
 from chat import Chat
 from dir_tree import DirItem, DirTree, DirectoryNotFoundException
 
-from static_files import static_file_response
-from storage import DirectoryStorage
 import model
+from static_files import static_file_response
+from storage import DirectoryStorage, DirectoryItem
+from knowledge_base import KnowledgeBaseService
 
 app = FastAPI()
 config = parse_config('./config.yaml')
@@ -19,6 +20,7 @@ chat.load("data/Angular.json")
 chat.load("data/Python.json")
 storage = DirectoryStorage(config.get("storage"))
 dirTree = DirTree(config.get("workspace"))
+kbService = KnowledgeBaseService('data')
 
 @app.get("/api/config")
 async def read_config():
@@ -66,6 +68,13 @@ async def get_file(file_path: str):
     if not full_path.exists():
         raise HTTPException(status_code=404, detail="File not found")
     return HTMLResponse(content=full_path.read_text(), status_code=200)
+
+@app.get("/api/kb", response_model=List[DirectoryItem])
+def get_knowledge_base_items(path: str):
+    try:
+        return kbService.list_items(path)
+    except DirectoryNotFoundException as e:
+        raise HTTPException(status_code=404, detail=e.message)
 
 # Angular static files - it have to be at the end of file
 @app.get("/{full_path:path}", response_class=HTMLResponse)

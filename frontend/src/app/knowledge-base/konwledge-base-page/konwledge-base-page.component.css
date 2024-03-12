@@ -1,0 +1,34 @@
+:host {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    height: 100%;
+}
+
+.column,
+.column2 {
+    padding: 0.25em;
+    height: 100%;
+    box-sizing: border-box;
+}
+
+.column {
+    flex: 1;
+}
+
+.column2 {
+    flex: 2;
+}
+
+.tree-progress-bar {
+    margin-left: 1em;
+    margin-right: 1em;
+}
+
+mat-tree {
+    overflow: auto;
+    height: 100%;
+    width: 100%;
+    border: 1px solid #ccc;
+    box-sizing: border-box;
+}
