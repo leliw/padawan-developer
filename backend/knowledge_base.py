@@ -8,7 +8,7 @@ from storage import DirectoryStorage
 class KbTreeItem(BaseModel):
     name: str
     path: str
-    is_dir: bool
+    is_dir: bool = Field(..., alias="isDir")
     is_leaf: bool = Field(..., alias="isLeaf")
 
 class KnowledgeBase:
@@ -35,8 +35,8 @@ class KnowledgeBase:
         for c in self.resolver.get(self.root_node, path).children:
             if include_leaves or not c.is_leaf:
                 path = "/" + "/".join([str(node.name) for node in c.path if not node.is_root])
-                is_dir = c.is_dir if hasattr(c, "is_dir") else False
-                ret.append(KbTreeItem(name=c.name, path=path, is_dir=is_dir, is_leaf=c.is_leaf))
+                is_dir = c.isDir if hasattr(c, "isDir") else False
+                ret.append(KbTreeItem(name=c.name, path=path, isDir=is_dir, isLeaf=c.is_leaf))
         return sorted(ret, key=lambda x: x.name)
     
 class KnowledgeBaseService:

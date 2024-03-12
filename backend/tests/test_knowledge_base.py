@@ -21,10 +21,10 @@ class TestKnowledgeBaseService(unittest.TestCase):
     def setUp(self):
         root = Node("<root>")
         self.kb = KnowledgeBase(root)
-        s0 = Node("General", parent=root, is_dir=True)
+        s0 = Node("General", parent=root, isDir=True)
         Node("sub0B", parent=s0)
         Node("sub0A", parent=s0)
-        s1 = Node("Angular", parent=root, is_dir=True)
+        s1 = Node("Angular", parent=root, isDir=True)
         Node("sub1A", parent=s1)
         Node("sub1B", parent=s1, bar=8)
         s1c = Node("sub1C", parent=s1)
@@ -35,8 +35,8 @@ class TestKnowledgeBaseService(unittest.TestCase):
     def test_get_items(self):
         items = self.kb.list_items("")
         self.assertCountEqual(items, [
-            KbTreeItem.model_validate({"name": "General", "path": "/General", "is_dir": True, "is_leaf": False}),
-            KbTreeItem.model_validate({"name": "Angular", "path": "/Angular", "is_dir": True, "is_leaf": False})
+            KbTreeItem.model_validate({"name": "General", "path": "/General", "isDir": True, "isLeaf": False}),
+            KbTreeItem.model_validate({"name": "Angular", "path": "/Angular", "isDir": True, "isLeaf": False})
         ])
 
 if __name__ == '__main__':
