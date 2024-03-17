@@ -14,19 +14,19 @@
         </button>
     </div>
     <mat-tree [dataSource]="dataSource" [treeControl]="treeControl">
-        <mat-tree-node *matTreeNodeDef="let node" matTreeNodePadding>
+        <mat-tree-node *matTreeNodeDef="let node" matTreeNodePadding [class.selected]="node === selectedNode">
             <button mat-icon-button [attr.aria-label]="'Open ' + node.name" (click)="open(node)">
                 <mat-icon>description</mat-icon>
             </button>
-            {{node.name}}
+            <span>{{node.name}}</span>
         </mat-tree-node>
-        <mat-tree-node *matTreeNodeDef="let node; when: dataSource.hasChildren" matTreeNodePadding>
-            @if (node.hasChikdren) {
+        <mat-tree-node *matTreeNodeDef="let node; when: dataSource.hasChildren" matTreeNodePadding [class.selected]="node === selectedNode">
+            @if (node.hasChildren) {
             <button mat-icon-button [attr.aria-label]="'Toggle ' + node.name" matTreeNodeToggle>
                 <mat-icon>{{treeControl.isExpanded(node) ? 'folder_open' : 'folder'}}</mat-icon>
             </button>
             }
-            {{node.name}}
+            <span>{{node.name}}</span>
             @if (node.isLoading) {
             <mat-progress-bar mode="indeterminate" class="tree-progress-bar"></mat-progress-bar>
             }

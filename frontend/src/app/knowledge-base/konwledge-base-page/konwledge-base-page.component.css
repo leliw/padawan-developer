@@ -40,3 +40,8 @@ mat-tree {
 .icon-bar {
     text-align: right;
 }
+
+.selected {
+    color: white;
+    background-color: #673ab7;
+}

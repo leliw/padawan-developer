@@ -29,8 +29,7 @@ export class KonwledgeBasePageComponent {
     treeControl: FlatTreeControl<DirectoryItem>;
     dataSource: DynamicDataSource<DirectoryItem>;
     
-    name: string = "xxx";
-    path: string = "";
+    selectedNode!: DirectoryItem;
     content: string = "";
     code: string = "";
 
@@ -65,7 +64,7 @@ export class KonwledgeBasePageComponent {
                     this.options.mode = 'text';
                     this.code = data;
                 }
-                this.path = node.path;
+                this.selectedNode = node;
                 this.myEditorComponent?.codeMirror?.refresh();
             });
     }
@@ -75,9 +74,9 @@ export class KonwledgeBasePageComponent {
     }
 
     save() {
-        this.service.putContent(this.path, this.code).subscribe(data => {
+        this.service.putContent(this.selectedNode.path, this.code).subscribe(data => {
             this.saveDisabled = true;
         });
     }
-    
+
 }
