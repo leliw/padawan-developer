@@ -8,16 +8,17 @@ import { FlatTreeControl } from '@angular/cdk/tree';
 import { DynamicDataSource } from '../../utils/DynamicTree';
 import { CommonModule } from '@angular/common';
 import { CodemirrorComponent, CodemirrorModule } from '@ctrl/ngx-codemirror';
+import { FormsModule } from '@angular/forms';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 import 'codemirror/mode/css/css';
 import 'codemirror/mode/javascript/javascript';
 import 'codemirror/mode/markdown/markdown';
-import { FormsModule } from '@angular/forms';
 
 @Component({
     selector: 'app-konwledge-base-page',
     standalone: true,
-    imports: [MatTreeModule, MatButtonModule, MatIconModule, MatProgressBarModule, CommonModule, FormsModule, CodemirrorModule],
+    imports: [MatTreeModule, MatButtonModule, MatIconModule, MatTooltipModule,  MatProgressBarModule, CommonModule, FormsModule, CodemirrorModule],
     templateUrl: './konwledge-base-page.component.html',
     styleUrl: './konwledge-base-page.component.css'
 })
@@ -29,8 +30,11 @@ export class KonwledgeBasePageComponent {
     dataSource: DynamicDataSource<DirectoryItem>;
     
     name: string = "xxx";
+    path: string = "";
     content: string = "";
     code: string = "";
+
+    saveDisabled = true;
 
     options = { 
         lineNumbers: true, 
@@ -61,8 +65,19 @@ export class KonwledgeBasePageComponent {
                     this.options.mode = 'text';
                     this.code = data;
                 }
+                this.path = node.path;
                 this.myEditorComponent?.codeMirror?.refresh();
             });
     }
 
+    onCodeChange(event: any) {
+        this.saveDisabled = false;
+    }
+
+    save() {
+        this.service.putContent(this.path, this.code).subscribe(data => {
+            this.saveDisabled = true;
+        });
+    }
+    
 }

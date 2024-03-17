@@ -1,4 +1,5 @@
-
+"""Knowledge base"""
+from typing import BinaryIO
 from pydantic import BaseModel, Field
 from anytree import Node, Resolver
 
@@ -56,3 +57,7 @@ class KnowledgeBaseService:
     def get_node(self, path: str):
         parts = path.split(".")
         return self.storage.get(parts[0], file_ext=parts[1])
+    
+    def put_node(self, path: str, data: BinaryIO):
+        parts = path.split(".")
+        self.storage.put(parts[0], data, file_ext=parts[1])

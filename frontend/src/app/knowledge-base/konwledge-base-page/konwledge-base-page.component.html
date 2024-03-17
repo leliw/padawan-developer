@@ -1,4 +1,18 @@
 <section class="column">
+    <div class="icon-bar">
+        <button mat-icon-button matTooltip="Add file" aria-label="Add file" disabled="true">
+            <mat-icon>note_add</mat-icon>
+        </button>
+        <button mat-icon-button matTooltip="Add file" aria-label="Add folder" disabled="true">
+            <mat-icon>create_new_folder</mat-icon>
+        </button>                
+        <button mat-icon-button matTooltip="Rename" aria-label="Rename" disabled="true">
+            <mat-icon>edit</mat-icon>
+        </button>        
+        <button mat-icon-button matTooltip="Save" aria-label="Save" [disabled]="saveDisabled" (click)="save()">
+            <mat-icon>save</mat-icon>
+        </button>
+    </div>
     <mat-tree [dataSource]="dataSource" [treeControl]="treeControl">
         <mat-tree-node *matTreeNodeDef="let node" matTreeNodePadding>
             <button mat-icon-button [attr.aria-label]="'Open ' + node.name" (click)="open(node)">
@@ -20,7 +34,7 @@
     </mat-tree>
 </section>
 <section class="column2">
-    <ngx-codemirror #editor [(ngModel)]="code" [options]="options" autofocus="true"></ngx-codemirror>
+    <ngx-codemirror #editor [(ngModel)]="code" (ngModelChange)="onCodeChange($event)" [options]="options" autofocus="true"></ngx-codemirror>
 </section>
 <section class="column2">
     <pre>{{content | json}}</pre>

@@ -1,7 +1,7 @@
 """Main file for FastAPI server"""
 from pathlib import Path
-from typing import List, Union
-from fastapi import FastAPI, HTTPException, Request, WebSocket
+from typing import List
+from fastapi import FastAPI, File, HTTPException, Request, WebSocket
 from fastapi.responses import HTMLResponse
 from pyaml_env import parse_config
 from chat import Chat
@@ -51,7 +51,7 @@ async def get_application_state() -> model.ApplicationState:
     return state
 
 @app.get("/api/dir-tree", response_model=List[DirItem])
-def get_subdirs(path: str):
+async def get_subdirs(path: str):
     try:
         return dirTree.list_items(path)
     except DirectoryNotFoundException as e:
@@ -71,16 +71,25 @@ async def get_file(file_path: str):
     return HTMLResponse(content=full_path.read_text(), status_code=200)
 
 @app.get("/api/kb", response_model=List[DirectoryItem])
-def get_knowledge_base_items(path: str):
+async def get_knowledge_base_items(path: str):
     try:
         return kbService.list_items(path)
     except DirectoryNotFoundException as e:
         raise HTTPException(status_code=404, detail=e.message)
     
 @app.get("/api/kb/content")
-def get_knowledge_base_item_content(path: str):
+async def get_knowledge_base_item_content(path: str):
     try:
         return kbService.get_node(path)
+    except KeyNotExists as e:
+        raise HTTPException(status_code=404, detail=e.message)
+    
+@app.put("/api/kb/content")
+async def put_kowledge_base_item_content(path: str, request: Request):
+    try:
+        body_bytes = await request.body()
+        body_text = body_bytes.decode("utf-8")
+        return kbService.put_node(path, body_text)
     except KeyNotExists as e:
         raise HTTPException(status_code=404, detail=e.message)
 

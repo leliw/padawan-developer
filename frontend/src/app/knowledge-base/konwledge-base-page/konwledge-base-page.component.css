@@ -36,3 +36,7 @@ mat-tree {
 .editor {
     height: 100%;
 }
+
+.icon-bar {
+    text-align: right;
+}

@@ -41,4 +41,10 @@ export class KnowledgeBaseService {
         let params = new HttpParams().append('path', path);
         return this.httpClient.get<any>(`${this.endpoint}/content`, { params: params });
     }
+
+    putContent(path: string, content: string): Observable<any> {
+        let params = new HttpParams().append('path', path);
+        return this.httpClient.put<any>(`${this.endpoint}/content`, content, { params: params });
+    }
+    
 }
