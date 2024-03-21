@@ -1,7 +1,6 @@
 """Read directory structure and list items in a directory"""
 import os
 from typing import List
-from fastapi import HTTPException
 from pydantic import BaseModel
 
 class DirectoryNotFoundException(Exception):

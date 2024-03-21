@@ -1,6 +1,7 @@
 """Main file for FastAPI server"""
+
 from pathlib import Path
-from typing import List, Union
+from typing import List
 from fastapi import FastAPI, HTTPException, Request, WebSocket
 from fastapi.responses import HTMLResponse
 from pyaml_env import parse_config
@@ -12,7 +13,7 @@ from storage import DirectoryStorage
 import model
 
 app = FastAPI()
-config = parse_config('./config.yaml')
+config = parse_config("./config.yaml")
 chat = Chat(config.get("workspace"))
 chat.load("data/Project.json")
 chat.load("data/Angular.json")
@@ -25,27 +26,36 @@ async def read_config():
     """Return config from yaml file"""
     return config
 
+
 @app.websocket("/api/ws")
 async def websocket_endpoint(websocket: WebSocket):
     await websocket.accept()
     while True:
         data = await websocket.receive_text()
         question = data.strip('"')
-        state = storage.get("app_storage", model_class=model.ApplicationState) or model.ApplicationState()
+        state = (
+            storage.get("app_storage", model_class=model.ApplicationState)
+            or model.ApplicationState()
+        )
         chat.params = state.parameters
         answers = chat.get_answer(question)
-        state.chat_history.append(model.ChatMessage(channel="master",  text=question))
+        state.chat_history.append(model.ChatMessage(channel="master", text=question))
         for answer in answers:
             state.chat_history.append(model.ChatMessage(**answer))
             await websocket.send_json(answer)
         state.parameters = chat.params
         storage.put("app_storage", state, file_ext="json")
 
-@app.get("/api/app-state",response_model_exclude_none=True)
+
+@app.get("/api/app-state", response_model_exclude_none=True)
 async def get_application_state() -> model.ApplicationState:
     """Return application state"""
-    state = storage.get("app_storage", model_class=model.ApplicationState) or model.ApplicationState()
+    state = (
+        storage.get("app_storage", model_class=model.ApplicationState)
+        or model.ApplicationState()
+    )
     return state
+
 
 @app.get("/api/dir-tree", response_model=List[DirItem])
 def get_subdirs(path: str):
@@ -60,7 +70,7 @@ async def get_file(file_path: str):
     """Return file content"""
     if file_path.startswith("/"):
         file_path = file_path[1:]
-    chat.params['project_name'] = ""
+    chat.params["project_name"] = ""
     project_path = chat.get_project_path()
     full_path = Path(f"{project_path}{file_path}")
     if not full_path.exists():
