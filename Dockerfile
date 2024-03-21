@@ -1,7 +1,5 @@
 FROM python:3.11.7-slim
 
-COPY entrypoint.sh ./
-
 # Start and enable SSH
 RUN apt-get update \
     && apt-get install -y --no-install-recommends dialog \
@@ -23,6 +21,7 @@ RUN python -m pip install -r requirements.txt
 
 WORKDIR /app
 COPY ./backend/ /app
+COPY entrypoint.sh ./app
 
 VOLUME /workspace
 
