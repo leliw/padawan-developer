@@ -1,0 +1,11 @@
+{
+	"folders": [
+		{
+			"path": "backend"
+		}
+    ],
+    "settings": {
+        "github.copilot.chat.localeOverride": "en",
+        "workbench.colorTheme": "Tomorrow Night Blue"
+    }
+}
