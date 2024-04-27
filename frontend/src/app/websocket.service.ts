@@ -17,9 +17,10 @@ export class WebsocketService {
     constructor() {
         const url = new URL(window.origin);
         let host = url.host;
+        let protocol = url.protocol === 'https:' ? 'wss' : 'ws';
         // Replace the port of the host if the app is running in development mode
         host = host.replace('localhost:4200', 'localhost:8000')
-        const socketUrl = `ws://${host}${this.endpoint}`;
+        const socketUrl = `${protocol}://${host}${this.endpoint}`;
         this.socket$ = new WebSocketSubject(socketUrl);
     }
 
