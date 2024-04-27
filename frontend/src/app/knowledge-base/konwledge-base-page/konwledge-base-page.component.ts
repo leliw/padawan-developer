@@ -14,11 +14,12 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import 'codemirror/mode/css/css';
 import 'codemirror/mode/javascript/javascript';
 import 'codemirror/mode/markdown/markdown';
+import { RouterModule } from '@angular/router';
 
 @Component({
     selector: 'app-konwledge-base-page',
     standalone: true,
-    imports: [MatTreeModule, MatButtonModule, MatIconModule, MatTooltipModule,  MatProgressBarModule, CommonModule, FormsModule, CodemirrorModule],
+    imports: [MatTreeModule, MatButtonModule, MatIconModule, MatTooltipModule,  MatProgressBarModule, CommonModule, FormsModule, CodemirrorModule, RouterModule],
     templateUrl: './konwledge-base-page.component.html',
     styleUrl: './konwledge-base-page.component.css'
 })
