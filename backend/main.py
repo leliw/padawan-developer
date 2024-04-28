@@ -8,10 +8,12 @@ from pyaml_env import parse_config
 from chat import Chat
 from dir_tree import DirItem, DirTree, DirectoryNotFoundException
 
-import model
+from gcp.gcp_storage import Storage
+from knowledge_base.article import Article
+from knowledge_base.knowledge_base_service import KnowledgeBaseService
 from static_files import static_file_response
+import model
 from storage import DirectoryStorage, DirectoryItem, KeyNotExists
-from knowledge_base import KnowledgeBaseService
 
 
 app = FastAPI()
@@ -22,7 +24,6 @@ chat.load("data/Angular.json")
 chat.load("data/Python.json")
 storage = DirectoryStorage(config.get("storage"))
 dirTree = DirTree(config.get("workspace"))
-kbService = KnowledgeBaseService("data")
 
 
 @app.get("/api/config")
@@ -82,10 +83,18 @@ async def get_file(file_path: str):
     return HTMLResponse(content=full_path.read_text(), status_code=200)
 
 
+knowledge_base_service = KnowledgeBaseService(Storage("knowledge_base", Article))
+
+
 @app.get("/api/kb", response_model=List[DirectoryItem])
 async def get_knowledge_base_items(path: str):
     try:
-        return kbService.list_items(path)
+        return [
+            DirectoryItem(
+                name=a.title, path=a.title, isDir=False, isLeaf=True, hasChildren=False
+            )
+            for a in knowledge_base_service.list()
+        ]
     except DirectoryNotFoundException as e:
         raise HTTPException(status_code=404, detail=e.message)
 
@@ -93,7 +102,7 @@ async def get_knowledge_base_items(path: str):
 @app.get("/api/kb/content")
 async def get_knowledge_base_item_content(path: str):
     try:
-        return kbService.get_node(path)
+        return knowledge_base_service.read(path).content
     except KeyNotExists as e:
         raise HTTPException(status_code=404, detail=e.message)
 
@@ -103,9 +112,34 @@ async def put_kowledge_base_item_content(path: str, request: Request):
     try:
         body_bytes = await request.body()
         body_text = body_bytes.decode("utf-8")
-        return kbService.put_node(path, body_text)
+        return knowledge_base_service.update(path, Article(title=path, content=body_text))
     except KeyNotExists as e:
         raise HTTPException(status_code=404, detail=e.message)
+
+
+# @app.post("/api/knowledge-base/articles")
+# async def knowledge_base_create(item: Article):
+#     return knowledge_base_service.create(item)
+
+
+# @app.get("/api/knowledge-base/articles")
+# async def knowledge_base_list():
+#     return knowledge_base_service.list()
+
+
+# @app.get("/api/knowledge-base/articles/{article_id}")
+# async def knowledge_base_read(article_id: str):
+#     return knowledge_base_service.read(article_id)
+
+
+# @app.put("/api/knowledge-base/articles/{article_id}")
+# async def knowledge_base_update(article_id: str, item: Article):
+#     return knowledge_base_service.update(article_id, item)
+
+
+# @app.delete("/api/knowledge-base/articles/{article_id}")
+# async def knowledge_base_delete(article_id: str):
+#     return knowledge_base_service.delete(article_id)
 
 
 # Angular static files - it have to be at the end of file

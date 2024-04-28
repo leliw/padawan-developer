@@ -161,3 +161,4 @@ cython_debug/
 backend/static/**
 backend/tests/tmp/**
 storage/**
+.keys/**

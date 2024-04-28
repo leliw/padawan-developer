@@ -40,7 +40,7 @@ class KnowledgeBase:
                 ret.append(KbTreeItem(name=c.name, path=path, isDir=is_dir, isLeaf=c.is_leaf))
         return sorted(ret, key=lambda x: x.name)
     
-class KnowledgeBaseService:
+class KnowledgeBaseTreeService:
 
     def __init__(self, base_path: str):
         self.storage = DirectoryStorage(base_path)
