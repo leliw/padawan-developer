@@ -86,7 +86,7 @@ async def get_file(file_path: str):
 knowledge_base_service = KnowledgeBaseService(Storage("knowledge_base", Article))
 
 
-@app.get("/api/kb", response_model=List[DirectoryItem])
+@app.get("/api/kb", tags=["knowledge_base"], response_model=List[DirectoryItem])
 async def get_knowledge_base_items(path: str):
     try:
         return [
@@ -99,7 +99,7 @@ async def get_knowledge_base_items(path: str):
         raise HTTPException(status_code=404, detail=e.message)
 
 
-@app.get("/api/kb/content")
+@app.get("/api/kb/content", tags=["knowledge_base"])
 async def get_knowledge_base_item_content(path: str):
     try:
         return knowledge_base_service.read(path).content
@@ -107,7 +107,7 @@ async def get_knowledge_base_item_content(path: str):
         raise HTTPException(status_code=404, detail=e.message)
 
 
-@app.put("/api/kb/content")
+@app.put("/api/kb/content", tags=["knowledge_base"])
 async def put_kowledge_base_item_content(path: str, request: Request):
     try:
         body_bytes = await request.body()
@@ -117,9 +117,9 @@ async def put_kowledge_base_item_content(path: str, request: Request):
         raise HTTPException(status_code=404, detail=e.message)
 
 
-# @app.post("/api/knowledge-base/articles")
-# async def knowledge_base_create(item: Article):
-#     return knowledge_base_service.create(item)
+@app.post("/api/knowledge-base/articles", tags=["knowledge_base"])
+async def knowledge_base_create(item: Article):
+    return knowledge_base_service.create(item)
 
 
 # @app.get("/api/knowledge-base/articles")
