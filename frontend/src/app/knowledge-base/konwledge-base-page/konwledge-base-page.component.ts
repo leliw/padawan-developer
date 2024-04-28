@@ -15,34 +15,36 @@ import 'codemirror/mode/css/css';
 import 'codemirror/mode/javascript/javascript';
 import 'codemirror/mode/markdown/markdown';
 import { RouterModule } from '@angular/router';
+import { MatDialog } from '@angular/material/dialog';
+import { InputValueComponent } from '../../shared/input-value/input-value.component';
 
 @Component({
     selector: 'app-konwledge-base-page',
     standalone: true,
-    imports: [MatTreeModule, MatButtonModule, MatIconModule, MatTooltipModule,  MatProgressBarModule, CommonModule, FormsModule, CodemirrorModule, RouterModule],
+    imports: [MatTreeModule, MatButtonModule, MatIconModule, MatTooltipModule, MatProgressBarModule, CommonModule, FormsModule, CodemirrorModule, RouterModule],
     templateUrl: './konwledge-base-page.component.html',
     styleUrl: './konwledge-base-page.component.css'
 })
 export class KonwledgeBasePageComponent {
 
     @ViewChild('myEditor') myEditorComponent!: CodemirrorComponent;
-    
+
     treeControl: FlatTreeControl<DirectoryItem>;
     dataSource: DynamicDataSource<DirectoryItem>;
-    
+
     selectedNode!: DirectoryItem;
     content: string = "";
     code: string = "";
     org_code: string = "";
     editMode = false;
 
-    options = { 
-        lineNumbers: true, 
-        theme: 'material', 
+    options = {
+        lineNumbers: true,
+        theme: 'material',
         mode: 'javascript'
     };
 
-    constructor(private service: KnowledgeBaseService) {
+    constructor(private dialog: MatDialog, private service: KnowledgeBaseService) {
         this.treeControl = new FlatTreeControl<DirectoryItem>(
             node => node.level,
             node => !node.isLeaf
@@ -58,7 +60,7 @@ export class KonwledgeBasePageComponent {
                 if (node.path.endsWith(".json")) {
                     this.options.mode = 'javascript';
                     this.code = JSON.stringify(data, null, 2);
-                } else if (node.path.endsWith(".md")) { 
+                } else if (node.path.endsWith(".md")) {
                     this.options.mode = 'markdown';
                     this.code = data;
                 } else {
@@ -88,12 +90,18 @@ export class KonwledgeBasePageComponent {
     }
 
     rename() {
-        const name = prompt("Enter new name", this.selectedNode.name);
-        if (name) {
-            this.service.rename(this.selectedNode.path, name).subscribe(data => {
-                this.selectedNode.path = this.selectedNode.path.replace(this.selectedNode.name, name);
-                this.selectedNode.name = name;
-            });
-        }
+        const dialogRef = this.dialog.open(InputValueComponent, {
+            width: '40rem',
+            data: { title: 'Rename', prompt: 'Enter new name', label: 'Name', value: this.selectedNode.name }
+        });
+
+        dialogRef.afterClosed().subscribe(name => {
+            if (name) {
+                this.service.rename(this.selectedNode.path, name).subscribe(data => {
+                    this.selectedNode.path = this.selectedNode.path.replace(this.selectedNode.name, name);
+                    this.selectedNode.name = name;
+                });
+            }
+        })
     }
 }

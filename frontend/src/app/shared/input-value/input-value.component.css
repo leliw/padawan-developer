@@ -1,0 +1,11 @@
+mat-form-field {
+    width: 100%;
+}
+
+mat-dialog-actions {
+    justify-content: center;
+}
+
+mat-dialog-actions button {
+    margin: 0 0.5rem;
+}
