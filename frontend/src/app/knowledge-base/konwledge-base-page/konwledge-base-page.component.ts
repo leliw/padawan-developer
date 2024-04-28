@@ -33,8 +33,8 @@ export class KonwledgeBasePageComponent {
     selectedNode!: DirectoryItem;
     content: string = "";
     code: string = "";
-
-    saveDisabled = true;
+    org_code: string = "";
+    editMode = false;
 
     options = { 
         lineNumbers: true, 
@@ -66,18 +66,34 @@ export class KonwledgeBasePageComponent {
                     this.code = data;
                 }
                 this.selectedNode = node;
+                this.org_code = this.code
                 this.myEditorComponent?.codeMirror?.refresh();
             });
     }
 
     onCodeChange(event: any) {
-        this.saveDisabled = false;
+        this.editMode = true;
     }
 
     save() {
         this.service.putContent(this.selectedNode.path, this.code).subscribe(data => {
-            this.saveDisabled = true;
+            this.editMode = false;
         });
     }
 
+    cancel() {
+        this.code = this.org_code;
+        this.myEditorComponent?.codeMirror?.refresh();
+        this.editMode = false;
+    }
+
+    rename() {
+        const name = prompt("Enter new name", this.selectedNode.name);
+        if (name) {
+            this.service.rename(this.selectedNode.path, name).subscribe(data => {
+                this.selectedNode.path = this.selectedNode.path.replace(this.selectedNode.name, name);
+                this.selectedNode.name = name;
+            });
+        }
+    }
 }

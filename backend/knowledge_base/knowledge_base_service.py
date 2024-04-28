@@ -23,3 +23,6 @@ class KnowledgeBaseService:
     
     def delete(self, article_id: str):
         return self.storage.delete(article_id)
+    
+    def rename(self, old_key: str, new_key: str):
+        return self.storage.rename_key(old_key, new_key)

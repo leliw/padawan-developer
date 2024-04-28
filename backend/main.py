@@ -2,7 +2,7 @@
 
 from pathlib import Path
 from typing import List
-from fastapi import FastAPI, HTTPException, Request, WebSocket
+from fastapi import Body, FastAPI, HTTPException, Request, WebSocket
 from fastapi.responses import HTMLResponse
 from pyaml_env import parse_config
 from chat import Chat
@@ -83,7 +83,7 @@ async def get_file(file_path: str):
     return HTMLResponse(content=full_path.read_text(), status_code=200)
 
 
-knowledge_base_service = KnowledgeBaseService(Storage("knowledge_base", Article))
+knowledge_base_service = KnowledgeBaseService(Storage("knowledge_base", Article, key_name="title"))
 
 
 @app.get("/api/kb", tags=["knowledge_base"], response_model=List[DirectoryItem])
@@ -107,6 +107,11 @@ async def get_knowledge_base_item_content(path: str):
         raise HTTPException(status_code=404, detail=e.message)
 
 
+@app.post("/api/knowledge-base/articles", tags=["knowledge_base"])
+async def knowledge_base_create(item: Article):
+    return knowledge_base_service.create(item)
+
+
 @app.put("/api/kb/content", tags=["knowledge_base"])
 async def put_kowledge_base_item_content(path: str, request: Request):
     try:
@@ -117,14 +122,17 @@ async def put_kowledge_base_item_content(path: str, request: Request):
         raise HTTPException(status_code=404, detail=e.message)
 
 
-@app.post("/api/knowledge-base/articles", tags=["knowledge_base"])
-async def knowledge_base_create(item: Article):
-    return knowledge_base_service.create(item)
+@app.patch("/api/knowledge-base/articles", tags=["knowledge_base"])
+async def knowledge_base_rename(path: str, new_path: str = Body(media_type="text/plain")):
+    try:
+        return knowledge_base_service.rename(path, new_path)
+    except KeyNotExists as e:
+        raise HTTPException(status_code=404, detail=e.message)
+    
 
-
-# @app.get("/api/knowledge-base/articles")
-# async def knowledge_base_list():
-#     return knowledge_base_service.list()
+@app.get("/api/knowledge-base/articles")
+async def knowledge_base_list():
+    return knowledge_base_service.list()
 
 
 # @app.get("/api/knowledge-base/articles/{article_id}")

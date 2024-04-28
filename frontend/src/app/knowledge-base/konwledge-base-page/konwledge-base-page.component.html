@@ -1,17 +1,25 @@
 <section class="column">
     <div class="icon-bar">
-        <button mat-icon-button matTooltip="Add file" aria-label="Add file" routerLink="/knowledge-base/articles/__NEW__">
+        @if (!editMode) {
+        <button mat-icon-button matTooltip="Add file" aria-label="Add file"
+            routerLink="/knowledge-base/articles/__NEW__">
             <mat-icon>note_add</mat-icon>
         </button>
         <button mat-icon-button matTooltip="Add file" aria-label="Add folder" disabled="true">
             <mat-icon>create_new_folder</mat-icon>
-        </button>                
-        <button mat-icon-button matTooltip="Rename" aria-label="Rename" disabled="true">
+        </button>
+        <button mat-icon-button matTooltip="Rename" aria-label="Rename" (click)="rename()">
             <mat-icon>edit</mat-icon>
-        </button>        
-        <button mat-icon-button matTooltip="Save" aria-label="Save" [disabled]="saveDisabled" (click)="save()">
+        </button>
+        } @else {
+        <button mat-icon-button matTooltip="Cancel" aria-label="Cancel" (click)="cancel()">
+            <mat-icon>undo</mat-icon>
+        </button>
+
+        <button mat-icon-button matTooltip="Save" aria-label="Save" color="primary" (click)="save()">
             <mat-icon>save</mat-icon>
         </button>
+        }
     </div>
     <mat-tree [dataSource]="dataSource" [treeControl]="treeControl">
         <mat-tree-node *matTreeNodeDef="let node" matTreeNodePadding [class.selected]="node === selectedNode">
@@ -20,7 +28,8 @@
             </button>
             <span>{{node.name}}</span>
         </mat-tree-node>
-        <mat-tree-node *matTreeNodeDef="let node; when: dataSource.hasChildren" matTreeNodePadding [class.selected]="node === selectedNode">
+        <mat-tree-node *matTreeNodeDef="let node; when: dataSource.hasChildren" matTreeNodePadding
+            [class.selected]="node === selectedNode">
             @if (node.hasChildren) {
             <button mat-icon-button [attr.aria-label]="'Toggle ' + node.name" matTreeNodeToggle>
                 <mat-icon>{{treeControl.isExpanded(node) ? 'folder_open' : 'folder'}}</mat-icon>
@@ -34,7 +43,8 @@
     </mat-tree>
 </section>
 <section class="column2">
-    <ngx-codemirror #editor [(ngModel)]="code" (ngModelChange)="onCodeChange($event)" [options]="options" autofocus="true"></ngx-codemirror>
+    <ngx-codemirror #editor [(ngModel)]="code" (ngModelChange)="onCodeChange($event)" [options]="options"
+        autofocus="true"></ngx-codemirror>
 </section>
 <section class="column2">
     <pre>{{content | json}}</pre>
