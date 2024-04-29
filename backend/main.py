@@ -14,6 +14,7 @@ from knowledge_base.knowledge_base_service import KnowledgeBaseService
 from static_files import static_file_response
 import model
 from storage import DirectoryStorage, DirectoryItem, KeyNotExists
+from gcp.gcp_storage import Node
 
 
 app = FastAPI()
@@ -86,15 +87,10 @@ async def get_file(file_path: str):
 knowledge_base_service = KnowledgeBaseService(Storage("knowledge_base", Article, key_name="title"))
 
 
-@app.get("/api/kb", tags=["knowledge_base"], response_model=List[DirectoryItem])
+@app.get("/api/kb", tags=["knowledge_base"], response_model=List[Node])
 async def get_knowledge_base_items(path: str):
     try:
-        return [
-            DirectoryItem(
-                name=a.title, path=a.title, isDir=False, isLeaf=True, hasChildren=False
-            )
-            for a in knowledge_base_service.list()
-        ]
+        return knowledge_base_service.list(path)
     except DirectoryNotFoundException as e:
         raise HTTPException(status_code=404, detail=e.message)
 
@@ -105,6 +101,11 @@ async def get_knowledge_base_item_content(path: str):
         return knowledge_base_service.read(path).content
     except KeyNotExists as e:
         raise HTTPException(status_code=404, detail=e.message)
+
+
+@app.post("/api/knowledge-base", tags=["knowledge_base"])
+async def knowledge_base_create_folder(item: DirectoryItem):
+    return knowledge_base_service.create_folder(item.path, item.name)
 
 
 @app.post("/api/knowledge-base/articles", tags=["knowledge_base"])

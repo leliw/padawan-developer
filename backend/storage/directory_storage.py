@@ -6,7 +6,7 @@ The key can contain any number "/" to create a tree of directories.
 import logging
 import os
 from pathlib import Path
-from typing import List
+from typing import List, Optional
 
 from pydantic import BaseModel, Field
 
@@ -17,6 +17,7 @@ class DirectoryItem(BaseModel):
     """Directory item"""
     name: str
     path: str
+    content: Optional[str] = None
     is_dir: bool = Field(..., alias="isDir")
     is_leaf: bool = Field(..., alias="isLeaf")
     has_children: bool = Field(..., alias="hasChildren")
